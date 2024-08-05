@@ -4,10 +4,10 @@ BUILD_DIR = build
 all: server client
 
 server: 
-	javac $(SRC_DIR)/Server/*.java -d $(BUILD_DIR)
+	javac $(SRC_DIR)/Server/*.java $(SRC_DIR)/Utils/*.java -d $(BUILD_DIR)
 
 client: 
-	javac $(SRC_DIR)/Client/*.java -d $(BUILD_DIR)
+	javac $(SRC_DIR)/Client/*.java $(SRC_DIR)/Utils/*.java  -d $(BUILD_DIR)
 
 clean: 
 	rm -rf $(BUILD_DIR)/Client/* $(BUILD_DIR)/Server/*

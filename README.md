@@ -1,23 +1,11 @@
-## HOTELIER java client-server application
+## HOTELIER
+Hotelier client-server java application make for lab3 final exam. The project is split in client and server programs. They comunicate using a tcp connection.
 
-#### Hotelier client
-- registration      (no account)
-- login             (account)
-- logout            (account)
-
-- search hotel      (no account)
-- search all hotel  (no account)
-- insert review     (account)
-- show badges       (accouunt)
-
-#### Hotelier server
-- store data
- - user (email, password, badges)
- - hotel (name, city, description)
- - review (vote, content)
-
-- insert data
-- select data
-- remove data
-
-- calculate ranking 
+Build all project use
+```
+make
+```
+Run project with
+```
+make run_server & make run_client
+```

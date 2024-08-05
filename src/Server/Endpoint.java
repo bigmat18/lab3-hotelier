@@ -1,19 +1,22 @@
 package Server;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class Endpoint {
-    public StatusCode GET() {
+    public StatusCode GET(InputStream input, OutputStream output) {
         return StatusCode.METHOD_NOT_ALLOWED;
     }
     
-    public StatusCode POST() {
+    public StatusCode POST(InputStream input, OutputStream output) {
         return StatusCode.METHOD_NOT_ALLOWED;
     }
 
-    public StatusCode DELETE() {
+    public StatusCode DELETE(InputStream input, OutputStream output) {
         return StatusCode.METHOD_NOT_ALLOWED;
     }
 
-    public StatusCode PATCH() {
+    public StatusCode PATCH(InputStream input, OutputStream output) {
         return StatusCode.METHOD_NOT_ALLOWED;
     }
 }

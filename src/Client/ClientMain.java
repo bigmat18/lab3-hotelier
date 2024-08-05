@@ -17,15 +17,11 @@ public class ClientMain {
     public static void main(String[] args) {
 
         try (Socket socket = new Socket(HOST, PORT);
-             DataInputStream input = new DataInputStream(socket.getInputStream());
-             DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
+             PrintWriter output = new PrintWriter(socket.getOutputStream(), true)) {
 
             System.out.println("Client connected to: " + HOST + ":" + PORT);
-            while(true) {
-                int result = Keyboard.IntReader("Inserisci intero: ");
-                output.writeInt(result);
-                output.flush();
-            }
+
+            output.println("/test");
 
         } catch (Exception e) {
             System.err.println(e.getStackTrace());

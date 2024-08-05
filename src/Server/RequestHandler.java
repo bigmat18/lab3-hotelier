@@ -15,12 +15,8 @@ public class RequestHandler implements Runnable {
     RequestHandler(Socket connection) { this.connection = connection; }
 
     public void run() {
-        try (DataInputStream input = new DataInputStream(this.connection.getInputStream());
-             DataOutputStream output = new DataOutputStream(this.connection.getOutputStream())) {
-            int n = 0;
-            while((n = input.readInt()) != 99) {
-                System.out.println(n);
-            }
+        try (Scanner input = new Scanner(this.connection.getInputStream())) {
+            
             this.connection.close();
 
         } catch (IOException e) {}

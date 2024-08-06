@@ -4,7 +4,7 @@ BUILD_DIR = build
 all: server client
 
 server: 
-	javac $(SRC_DIR)/Server/*.java $(SRC_DIR)/Utils/*.java -d $(BUILD_DIR)
+	javac $(SRC_DIR)/Server/*.java $(SRC_DIR)/Server/Endpoints/*.java $(SRC_DIR)/Utils/*.java -d $(BUILD_DIR)
 
 client: 
 	javac $(SRC_DIR)/Client/*.java $(SRC_DIR)/Utils/*.java  -d $(BUILD_DIR)

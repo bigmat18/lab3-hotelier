@@ -18,8 +18,8 @@ public class ServerMain {
             
             ExecutorService pool = Executors.newFixedThreadPool(THREAD_POOL_NUM);
 
-            Router.Inizialize();
-            Database.Inizialize();
+            Router.inizialize();
+            Database.inizialize();
 
             System.out.println("Server running: " + server.getInetAddress().getHostName());
             
@@ -30,8 +30,7 @@ public class ServerMain {
             }
 
         } finally {
-            Router.Shutdown();
-            Database.Shutdown();
+            Database.shutdown();
         }
     }
 }

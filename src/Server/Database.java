@@ -1,11 +1,11 @@
 package Server;
 
 public class Database {
-    public static void Inizialize() {
+    public static void inizialize() {
 
     }
 
-    public static void Shutdown() {
+    public static void shutdown() {
 
     }
 }

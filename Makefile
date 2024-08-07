@@ -1,19 +1,20 @@
 SRC_DIR = src
-BUILD_DIR = build
+BIN_DIR = bin
+LIB_DIR = lib
 
 all: server client
 
 server: 
-	javac $(SRC_DIR)/Server/*.java $(SRC_DIR)/Server/Endpoints/*.java $(SRC_DIR)/Utils/*.java -d $(BUILD_DIR)
+	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Server/*.java $(SRC_DIR)/Server/Endpoints/*.java $(SRC_DIR)/Utils/*.java -d $(BIN_DIR)
 
 client: 
-	javac $(SRC_DIR)/Client/*.java $(SRC_DIR)/Utils/*.java  -d $(BUILD_DIR)
+	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Client/*.java $(SRC_DIR)/Utils/*.java  -d $(BIN_DIR)
 
 clean: 
-	rm -rf $(BUILD_DIR)/Client/* $(BUILD_DIR)/Server/*
+	rm -rf $(BIN_DIR)/Client/* $(BIN_DIR)/Server/*
 
 run_server: 
-	java -cp $(BUILD_DIR) Server.ServerMain
+	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar Server.ServerMain
 
 run_client: 
-	java -cp $(BUILD_DIR) Client.ClientMain 0.0.0.0
+	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar Client.ClientMain 0.0.0.0

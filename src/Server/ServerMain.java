@@ -28,7 +28,8 @@ public class ServerMain {
                 System.out.println("Connection from: " + connection.getInetAddress().getHostAddress());
                 pool.execute(new RequestHandler(connection));
             }
-
+        } catch(Exception e) {
+            System.err.println(e.getLocalizedMessage());
         } finally {
             Database.shutdown();
         }

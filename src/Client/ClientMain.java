@@ -15,10 +15,10 @@ import Utils.Response;
 
 import java.net.Socket;
 
-
 public class ClientMain {
     private static final String HOST = "0.0.0.0";
     private static final int PORT = 8080;
+    private static boolean running = true;
 
     public static void main(String[] args) {
 
@@ -28,11 +28,14 @@ public class ClientMain {
 
             System.out.println("Client connected to: " + HOST + ":" + PORT);
 
-            output.writeObject(new Request("/login", Request.Methods.GET));
-            Response response = (Response)input.readObject();
-            System.out.println(response.statusCode.toString());
+            while (running) {
+                Keyboard.StringReader();
+                output.writeObject(new Request("/login", Request.Methods.GET));
+                output.flush();
 
-            output.flush();
+                Response response = (Response)input.readObject();
+                System.out.println(response.statusCode.toString());
+            }
         } catch (Exception e) {
             System.err.println(e.getStackTrace());
         }

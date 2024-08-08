@@ -7,6 +7,8 @@ import java.net.http.WebSocket.Listener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import Server.Tables.User;
+
 public class ServerMain {
     private static boolean running = true;
 
@@ -29,6 +31,10 @@ public class ServerMain {
 
             Router.inizialize();
             Database.inizialize();
+
+            int id = Database.getLastTableId(User.class);
+            Database.insert(User.class, new User(id + 1, "123", "mat.giu2002@gmail.com"));
+            Database.delete(User.class, id);
 
             System.out.println("Server running: " + server.getInetAddress().getHostName());
             

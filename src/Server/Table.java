@@ -60,4 +60,20 @@ public class Table<T> {
             gson.toJson(map.values(), writer);
         }
     }
+
+    public int getLastId() {
+        return this.map.size();
+    }
+
+    public boolean insert(T element) {
+        if(this.map.put(this.map.size() + 1, element) == null)
+            return false;
+        return true;
+    }
+
+    public boolean delete(int id) {
+        if (this.map.remove(id) == null)
+            return false;
+        return true;
+    }
 }

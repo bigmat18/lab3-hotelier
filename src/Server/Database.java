@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import com.google.gson.Gson;
 
+import Server.Tables.Hotel;
+import Server.Tables.User;
+
 public class Database {
     private static File usersFile;
 
@@ -31,13 +34,26 @@ public class Database {
         addTable(table, gson, table.getSimpleName() + "s.json");
     }
 
-    private static<T> void addTable(Class<T> elemet, Gson gson, String fileName) throws IOException{
+    private static<T> void addTable(Class<T> element, Gson gson, String fileName) throws IOException{
         try {
-            Table<T> table = new Table<>(elemet, fileName, gson);
-            tables.put(elemet.getSimpleName(), table);
+            Table<T> table = new Table<>(element, fileName, gson);
+            tables.put(element.getSimpleName(), table);
         } catch (IOException e){
-            System.err.println("Error to load table: " + elemet.getSimpleName());
+            System.err.println("Error to load table: " + element.getSimpleName());
         }
     }
 
+    public static<T> int getLastTableId(Class<T> table) {
+        return tables.get(table.getSimpleName()).getLastId();
+    }
+
+    public static<T> boolean insert(Class<T> tableName, T element) {
+        Table<T> table = tables.get(tableName.getSimpleName());
+        return table.insert(element);
+    }
+
+    public static <T> boolean delete(Class<T> tableName, int id) {
+        Table<T> table = tables.get(tableName.getSimpleName());
+        return table.delete(id);
+    }
 }

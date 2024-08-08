@@ -1,4 +1,4 @@
-package Server;
+package Server.Tables;
 
 public class User{
     private int id;

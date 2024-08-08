@@ -1,36 +1,43 @@
 package Server;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.HashMap;
+import java.util.Map;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class Database {
-    private static final String HOTELS_FILE_NAME = "Hotels.json";
-    private static File file;
+    private static File usersFile;
 
-    public static void inizialize() throws IOException {
-        file = new File(HOTELS_FILE_NAME);
+    private static Map<String, Table> tables = new HashMap<>();
+    private static Gson gson = new Gson();
 
-        try(FileReader reader = new FileReader(file, StandardCharsets.UTF_8)) {
+    public static void inizialize() throws IOException{
+        addTable(User.class, gson);
+        addTable(Hotel.class, gson);
+    }
 
-            JsonElement jsonElement = JsonParser.parseReader(reader);
-            JsonArray jsonArrayOfItems = jsonElement.getAsJsonArray();
-
-            for(JsonElement element : jsonArrayOfItems) {
-                JsonObject itemJsonObject = element.getAsJsonObject();
-                System.out.println(itemJsonObject.get("name").toString());
+    public static void shutdown() {
+        for(Map.Entry<String, Table> table : tables.entrySet()) {
+            try { 
+                table.getValue().unloadData(gson);
+            } catch (IOException e) {
+                System.err.println("Error to unload data from table: " + table.getValue());
             }
         }
     }
 
-    public static void shutdown() {}
+    private static<T> void addTable(Class<T> table, Gson gson) throws IOException{
+        addTable(table, gson, table.getSimpleName() + "s.json");
+    }
+
+    private static<T> void addTable(Class<T> elemet, Gson gson, String fileName) throws IOException{
+        try {
+            Table<T> table = new Table<>(elemet, fileName, gson);
+            tables.put(elemet.getSimpleName(), table);
+        } catch (IOException e){
+            System.err.println("Error to load table: " + elemet.getSimpleName());
+        }
+    }
+
 }

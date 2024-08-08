@@ -31,4 +31,10 @@ public class Hotel {
         this.rate = rate;
         this.ratings = ratings;
     }
+
+    public int getId() { return this.id; }
+
+    public String toString() {
+        return this.name;
+    }
 }

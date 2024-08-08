@@ -14,6 +14,15 @@ public class ServerMain {
     private static final int PORT = 8080;
 
     public static void main(String[] args) throws Exception {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                System.out.println("Shutdown...");
+                try { Database.shutdown(); }
+                catch(Exception e) { System.out.println(e.getLocalizedMessage()); }
+            }
+        });
+
         try(ServerSocket server = new ServerSocket(PORT)) {
             
             ExecutorService pool = Executors.newFixedThreadPool(THREAD_POOL_NUM);
@@ -30,8 +39,6 @@ public class ServerMain {
             }
         } catch(Exception e) {
             System.err.println(e.getLocalizedMessage());
-        } finally {
-            Database.shutdown();
         }
     }
 }

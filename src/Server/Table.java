@@ -3,8 +3,13 @@ package Server;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.io.FileReader;
 import java.io.FileWriter;
 
@@ -16,7 +21,7 @@ import com.google.gson.JsonParser;
 public class Table<T> {
     private File file;
     private final String fileName;
-    private Map<Integer, T> map;
+    private TreeMap<Integer, T> map;
     private boolean isAlredyCreated;
 
     Table(Class<T> table, String fileName, Gson gson) throws IOException {
@@ -27,7 +32,7 @@ public class Table<T> {
 
     Table(Class<T> table, String fileName) throws IOException{
         this.fileName = fileName;
-        this.map = new HashMap<>();
+        this.map = new TreeMap<>();
 
         this.file = new File(fileName);
         this.isAlredyCreated = !this.file.exists();
@@ -62,7 +67,9 @@ public class Table<T> {
     }
 
     public int getLastId() {
-        return this.map.size();
+        if(this.map.isEmpty())
+            return 0;
+        return this.map.lastKey();
     }
 
     public boolean insert(T element) {
@@ -71,9 +78,15 @@ public class Table<T> {
         return true;
     }
 
-    public boolean delete(int id) {
-        if (this.map.remove(id) == null)
-            return false;
-        return true;
+    public boolean delete(Predicate<Map.Entry<Integer, T>> predicate) {
+        return this.map.entrySet().removeIf(predicate);
+    }
+
+    public ArrayList<T> select(Predicate<Map.Entry<Integer, T>> predicate) {
+        return this.map.entrySet()
+                       .stream()
+                       .filter(predicate)
+                       .map(Map.Entry::getValue)
+                       .collect(Collectors.toCollection(ArrayList::new));
     }
 }

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.http.WebSocket.Listener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,10 +33,6 @@ public class ServerMain {
 
             Router.inizialize();
             Database.inizialize();
-
-            int id = Database.getLastTableId(User.class);
-            Database.insert(User.class, new User(id + 1, "123", "mat.giu2002@gmail.com"));
-            Database.delete(User.class, id);
 
             System.out.println("Server running: " + server.getInetAddress().getHostName());
             

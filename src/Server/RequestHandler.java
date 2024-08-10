@@ -2,6 +2,7 @@ package Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,9 +35,11 @@ public class RequestHandler implements Runnable {
             while (this.running) {
                 Request request = Message.getMessage(Request.class, input.readUTF());
                 Response response = Router.routing(request);
-                System.out.println(response.statusCode.toString());
+                output.writeUTF(response.getString());
             }
             this.connection.close();
+        } catch (EOFException e) {
+            System.out.println("Connection closed with " + connection.getInetAddress());
         } catch (Exception e) {
             e.printStackTrace();
         }

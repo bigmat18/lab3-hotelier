@@ -1,5 +1,7 @@
 package Server.Endpoints;
 
-public class Login {
+import Server.Endpoint;
+
+public class Login extends Endpoint{
     
 }

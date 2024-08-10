@@ -1,5 +1,7 @@
 package Server.Endpoints;
 
-public class Logout {
+import Server.Endpoint;
+
+public class Logout extends Endpoint {
     
 }

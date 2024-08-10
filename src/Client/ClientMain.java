@@ -16,6 +16,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
+import Utils.Message;
 import Utils.Request;
 import Utils.Response;
 import Utils.User;
@@ -36,19 +37,23 @@ public class ClientMain {
             System.out.println("Client connected to: " + HOST + ":" + PORT);
 
             while (running) {
-                Keyboard.StringReader();
+                String keyInput = Keyboard.StringReader("To stop digit 'q': ");
+                if(keyInput.equals("q"));
+                    running = false;
 
-                User user = new User(1, "ciao", "ciao");
-                Request request = new Request("/login", Request.Methods.GET, user);
+                User user = new User("Admin1234556@", "Admin");
+                Request request = new Request("/registration", Request.Methods.POST, user);
                 output.writeUTF(request.getString());
                 output.flush();
 
-                // Response response = (Response)input.readObject();
-                // System.out.println(response.statusCode.toString());
+                Response response = Message.getMessage(Response.class, input.readUTF());
+                System.out.println(response.statusCode + " " + response.getRowBody());
             }
-
+            socket.close();
+            output.close();
+            input.close();
         } catch (Exception e) {
-            System.err.println(e.getStackTrace());
+            System.err.println(e.getMessage());
         }
     }
 }

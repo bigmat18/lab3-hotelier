@@ -41,7 +41,7 @@ public class ServerMain {
             
             while (running){
                 Socket connection = server.accept();
-                System.out.println("Connection from: " + connection.getInetAddress().getHostAddress());
+                System.out.println("Connection opened with: " + connection.getInetAddress());
                 pool.execute(new RequestHandler(connection));
             }
         } catch(Exception e) {

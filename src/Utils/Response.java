@@ -1,5 +1,6 @@
 package Utils;
 
+import com.google.gson.JsonObject;
 
 public class Response extends Message {
     public enum StatusCode {
@@ -36,14 +37,16 @@ public class Response extends Message {
     public StatusCode statusCode;
 
     public Response(StatusCode code) {
-        this(code, null);
+        this(code, "{}");
+    }
+
+    public Response(StatusCode code, JsonObject body) {
+        super(body.toString());
+        this.statusCode = code;
     }
 
     public Response(StatusCode code, Object body) {
+        super(body);
         this.statusCode = code;
-        if(body != null)
-            this.body = super.gson.toJson(body);
-        else 
-            this.body = "{}";
     }
 }

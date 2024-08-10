@@ -7,6 +7,9 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+import Server.Endpoints.Login;
+import Server.Endpoints.Logout;
+import Server.Endpoints.Registration;
 import Utils.Request;
 import Utils.Response;
 
@@ -16,9 +19,9 @@ public class Router {
     public static void inizialize() {
         endpoints = new HashMap<String, Endpoint>();
 
-        endpoints.put("/login", new Endpoint());
-        endpoints.put("/registration", new Endpoint());
-        endpoints.put("/logout", new Endpoint());
+        endpoints.put("/login", new Login());
+        endpoints.put("/registration", new Registration());
+        endpoints.put("/logout", new Logout());
     }
 
     public static Response routing(Request request) throws IOException{

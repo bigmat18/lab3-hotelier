@@ -37,21 +37,21 @@ public class ClientMain {
             System.out.println("Client connected to: " + HOST + ":" + PORT);
 
             while (running) {
+                System.out.print("");
                 String keyInput = Keyboard.StringReader("To stop digit 'q': ");
-                if(keyInput.equals("q"));
-                    running = false;
+                running = !keyInput.equals("q");
 
-                User user = new User("Admin123456@", "Admin");
-                Request request = new Request("/login", Request.Methods.POST, user);
+                JsonObject obj = new JsonObject();
+                obj.addProperty("password", "Admin123456@");
+                obj.addProperty("username", "Admin");
+
+                Request request = new Request("/login", Request.Methods.POST, obj);
                 output.writeUTF(request.getString());
                 output.flush();
 
                 Response response = Message.getMessage(Response.class, input.readUTF());
-                System.out.println(response.statusCode + " " + response.getRowBody());
+                System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
             }
-            socket.close();
-            output.close();
-            input.close();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }

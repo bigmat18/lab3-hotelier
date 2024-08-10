@@ -1,7 +1,7 @@
 package Utils;
 
 public class User{
-
+    private static final String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
     private int id;
     private String password;
     private String username;
@@ -22,8 +22,14 @@ public class User{
 
     public String getUsername() { return this.username; }
 
+    public static boolean isPasswordValid(String password) {
+        if(password.matches(passwordRegex))
+            return true;
+        return false;
+    }
+
     public boolean isPasswordValid() {
-        if(this.password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$"))
+        if (this.password.matches(passwordRegex))
             return true;
         return false;
     }

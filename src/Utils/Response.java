@@ -37,7 +37,7 @@ public class Response extends Message {
     public StatusCode statusCode;
 
     public Response(StatusCode code) {
-        this(code, "{}");
+        this.statusCode = code;
     }
 
     public Response(StatusCode code, String message) {

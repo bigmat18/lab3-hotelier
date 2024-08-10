@@ -13,7 +13,7 @@ public class Request extends Message {
     public Methods method;
 
     public Request(String url, Methods method) {
-        super("{}");
+        super();
         this.url = url;
         this.method = method;
     }
@@ -25,7 +25,7 @@ public class Request extends Message {
     }
 
     public Request(String url, Methods method, JsonObject body) {
-        super(body.toString());
+        super(body);
         this.url = url;
         this.method = method;
     }

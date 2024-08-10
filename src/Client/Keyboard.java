@@ -22,7 +22,7 @@ public class Keyboard {
 
 	public static String StringReader(String msg) {
 		String app = null;
-		System.out.println(msg);
+		System.out.print(msg);
 		try {
 			app = br.readLine();
 		} catch (IOException e) {
@@ -45,7 +45,7 @@ public class Keyboard {
 				number = Integer.parseInt(app);
 				i = 1;
 			} catch (NumberFormatException e) {
-				System.out.println("Deve essere inserito un numero\nRiprova: ");
+				System.out.print("Deve essere inserito un numero\nRiprova: ");
 			}
 		}
 		return number;
@@ -54,7 +54,7 @@ public class Keyboard {
 	public static int IntReader(String msg) {
 		String app = null;
 		int number = 0;
-		System.out.println(msg);
+		System.out.print(msg);
 		int i = 0;
 		while (i == 0) {
 			try {
@@ -66,7 +66,7 @@ public class Keyboard {
 				number = Integer.parseInt(app);
 				i = 1;
 			} catch (NumberFormatException e) {
-				System.out.println("Deve essere inserito un numero\nRiprova: ");
+				System.out.print("Deve essere inserito un numero\nRiprova: ");
 			}
 		}
 		return number;
@@ -86,7 +86,7 @@ public class Keyboard {
 				number = Double.parseDouble(app);
 				i = 1;
 			} catch (NumberFormatException e) {
-				System.out.println("Deve essere inserito un numero\nRiprova");
+				System.out.print("Deve essere inserito un numero\nRiprova");
 			}
 		}
 		return number;
@@ -96,7 +96,7 @@ public class Keyboard {
 		String app = null;
 		double number = 0;
 		int i = 0;
-		System.out.println(msg);
+		System.out.print(msg);
 		while (i == 0) {
 			try {
 				try {
@@ -107,7 +107,7 @@ public class Keyboard {
 				number = Double.parseDouble(app);
 				i = 1;
 			} catch (NumberFormatException e) {
-				System.out.println("Deve essere inserito un numero\nRiprova");
+				System.out.print("Deve essere inserito un numero\nRiprova");
 			}
 		}
 		return number;

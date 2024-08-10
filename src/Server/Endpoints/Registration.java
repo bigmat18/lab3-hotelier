@@ -34,7 +34,7 @@ public class Registration extends Endpoint {
                             
             return new Response(Response.StatusCode.CREATED, "User created");
         } catch(Exception e) {
-            return new Response(Response.StatusCode.CREATED,  e.getMessage());
+            return new Response(Response.StatusCode.BAD_REQUEST,  e.getMessage());
         }
     }
 }

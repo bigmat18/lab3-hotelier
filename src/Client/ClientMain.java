@@ -3,6 +3,7 @@ package Client;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -27,6 +28,7 @@ public class ClientMain {
     private static final String HOST = "0.0.0.0";
     private static final int PORT = 8080;
     private static boolean running = true;
+    private static boolean isLogged = false;
 
     public static void main(String[] args) {
 
@@ -37,23 +39,80 @@ public class ClientMain {
             System.out.println("Client connected to: " + HOST + ":" + PORT);
 
             while (running) {
-                System.out.print("");
-                String keyInput = Keyboard.StringReader("To stop digit 'q': ");
-                running = !keyInput.equals("q");
+                System.out.println("\n================================");
+                int choose = Keyboard.IntReader("1) Registration\n2) Login\n3) Logut\nChoose option (0 to quit):");
+                switch(choose) {
+                    case 0: {
+                        running = false;
+                        System.out.println("Quitting...");
+                        break;
+                    }
+                    case 1: {
+                        registration(output);
 
-                JsonObject obj = new JsonObject();
-                obj.addProperty("password", "Admin123456@");
-                obj.addProperty("username", "Admin");
+                        Response response = Message.getMessage(Response.class, input.readUTF());
+                        if(response.statusCode.equals(Response.StatusCode.CREATED))
+                            isLogged = true;
 
-                Request request = new Request("/login", Request.Methods.POST, obj);
-                output.writeUTF(request.getString());
-                output.flush();
+                        System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+                        break;
+                    }
+                    case 2: {
+                        login(output);
 
-                Response response = Message.getMessage(Response.class, input.readUTF());
-                System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+                        Response response = Message.getMessage(Response.class, input.readUTF());
+                        if (response.statusCode.equals(Response.StatusCode.OK))
+                            isLogged = true;
+
+                        System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+                        break;
+                    }
+                    case 3: {
+                        logout(output);
+
+                        Response response = Message.getMessage(Response.class, input.readUTF());
+                        if (response.statusCode.equals(Response.StatusCode.OK))
+                            isLogged = false;
+
+                        System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+                    }
+                }
+
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    public static void login(DataOutputStream output) throws IOException{
+        JsonObject obj = new JsonObject();
+        String username = Keyboard.StringReader("username: ");
+        String password = Keyboard.StringReader("password: ");
+
+        obj.addProperty("password", password);
+        obj.addProperty("username", username);
+
+        Request request = new Request("/login", Request.Methods.POST, obj);
+        output.writeUTF(request.getString());
+        output.flush();
+    }
+
+    public static void registration(DataOutputStream output) throws IOException{
+        JsonObject obj = new JsonObject();
+        String username = Keyboard.StringReader("username: ");
+        String password = Keyboard.StringReader("password: ");
+
+        obj.addProperty("password", password);
+        obj.addProperty("username", username);
+
+        Request request = new Request("/registration", Request.Methods.POST, obj);
+        output.writeUTF(request.getString());
+        output.flush();
+    }
+
+    public static void logout(DataOutputStream output) throws IOException {
+        Request request = new Request("/logout", Request.Methods.POST);
+        output.writeUTF(request.getString());
+        output.flush();
     }
 }

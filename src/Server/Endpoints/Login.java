@@ -24,7 +24,7 @@ public class Login extends Endpoint{
         if(users.isEmpty())
             return new Response(Response.StatusCode.BAD_REQUEST, "User not exists");
         
-        if(!users.get(0).getPassword().equals(data.get("password")))
+        if(!users.get(0).getPassword().equals(data.get("password").getAsString()))
             return new Response(Response.StatusCode.BAD_REQUEST, "Password incorrect");
 
         return new Response(Response.StatusCode.OK, "Login successfull");

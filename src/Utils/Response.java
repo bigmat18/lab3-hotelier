@@ -40,8 +40,8 @@ public class Response extends Message {
         this(code, "{}");
     }
 
-    public Response(StatusCode code, JsonObject body) {
-        super(body.toString());
+    public Response(StatusCode code, String message) {
+        super(message);
         this.statusCode = code;
     }
 

@@ -16,28 +16,20 @@ public class Registration extends Endpoint {
     @Override
     public Response POST(Request request) {
         User user = request.getBody(User.class);
-        JsonObject response = new JsonObject();
 
         ArrayList<User> users = Database.select(User.class, entry -> entry.getValue().getUsername().equals(user.getUsername()));
-        if(!users.isEmpty()) {
-            response.addProperty("message", "Username altredy exists");
-            return new Response(Response.StatusCode.BAD_REQUEST, response);
-        }
 
+        if(!users.isEmpty())
+            return new Response(Response.StatusCode.BAD_REQUEST, "Username altredy exists");
 
-        if(!user.isPasswordValid()) {
-            response.addProperty("message", "Password not valid");
-            return new Response(Response.StatusCode.BAD_REQUEST, response);
-        }
+        if(!user.isPasswordValid())
+            return new Response(Response.StatusCode.BAD_REQUEST, "Password not valid");
 
         try {
             Database.insert(User.class, user.getPassword(), user.getUsername());
-
-            response.addProperty("message", "User created");
-            return new Response(Response.StatusCode.CREATED, response);
+            return new Response(Response.StatusCode.CREATED, "User created");
         } catch(Exception e) {
-            response.addProperty("message", e.getMessage());
-            return new Response(Response.StatusCode.CREATED, response);
+            return new Response(Response.StatusCode.CREATED,  e.getMessage());
         }
     }
 }

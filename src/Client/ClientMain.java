@@ -41,8 +41,8 @@ public class ClientMain {
                 if(keyInput.equals("q"));
                     running = false;
 
-                User user = new User("Admin1234556@", "Admin");
-                Request request = new Request("/registration", Request.Methods.POST, user);
+                User user = new User("Admin123456@", "Admin");
+                Request request = new Request("/login", Request.Methods.POST, user);
                 output.writeUTF(request.getString());
                 output.flush();
 

@@ -21,37 +21,16 @@ public class Router {
         endpoints.put("/logout", new Endpoint());
     }
 
-    public static void routing(Request request, ObjectInputStream input, ObjectOutputStream output) throws IOException{
+    public static Response routing(Request request) throws IOException{
         Endpoint ep = endpoints.get(request.url);
         if(ep != null) {
             switch (request.method) {
-                case GET: {
-                    Response response = ep.GET(input); 
-                    output.writeObject(response);
-                    break;
-                }
-                case POST: {
-                    Response response = ep.POST(input); 
-                    output.writeObject(response);
-                    break;
-                }
-                case DELETE: {
-                    Response response = ep.DELETE(input); 
-                    output.writeObject(response);
-                    break;
-                }
-                case PATCH: {
-                    Response response = ep.PATCH(input); 
-                    output.writeObject(response);
-                    break;
-                }
-                default: {
-                    output.writeObject(new Response(Response.StatusCode.METHOD_NOT_ALLOWED));
-                    break;
-                }
+                case GET:       return ep.GET(request);
+                case POST:      return ep.POST(request); 
+                case DELETE:    return ep.DELETE(request); 
+                case PATCH:     return ep.PATCH(request); 
+                default:        return new Response(Response.StatusCode.METHOD_NOT_ALLOWED);
             }
-        } else {
-            output.writeObject(new Response(Response.StatusCode.NOT_FOUND));
-        }
+        } else                  return new Response(Response.StatusCode.NOT_FOUND);
     }
 }

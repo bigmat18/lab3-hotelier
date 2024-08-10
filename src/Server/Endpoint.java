@@ -1,27 +1,26 @@
 package Server;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
+import Utils.Request;
 import Utils.Response;
+import Utils.User;
 
 public class Endpoint {
 
-    public Response GET(ObjectInputStream request) {
+    public Response GET(Request request) {
+        User user = request.getBody(User.class);
+        System.out.println(user.getId());
         return new Response(Response.StatusCode.METHOD_NOT_ALLOWED);
     }
     
-    public Response POST(ObjectInputStream request) {
+    public Response POST(Request request) {
         return new Response(Response.StatusCode.METHOD_NOT_ALLOWED);
     }
 
-    public Response DELETE(ObjectInputStream request) {
+    public Response DELETE(Request request) {
         return new Response(Response.StatusCode.METHOD_NOT_ALLOWED);
     }
 
-    public Response PATCH(ObjectInputStream request) {
+    public Response PATCH(Request request) {
         return new Response(Response.StatusCode.METHOD_NOT_ALLOWED);
     }
 }

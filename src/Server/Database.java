@@ -11,8 +11,8 @@ import java.util.function.Predicate;
 
 import com.google.gson.Gson;
 
-import Server.Tables.Hotel;
-import Server.Tables.User;
+import Utils.Hotel;
+import Utils.User;
 
 public class Database {
     private static File usersFile;

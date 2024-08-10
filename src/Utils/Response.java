@@ -1,10 +1,7 @@
 package Utils;
 
-import java.io.Serializable;
 
-import Utils.Request.Methods;
-
-public class Response implements Serializable {
+public class Response extends Message {
     public enum StatusCode {
         OK                              (200, "OK"),
         CREATED                         (201, "Created"),
@@ -35,10 +32,18 @@ public class Response implements Serializable {
         public String toString() { return code + " " + reasonPhrase; }
     }
 
-    private static final long serialVersionUID = 1L;
+
     public StatusCode statusCode;
 
-    public Response(StatusCode statisCode) {
-        this.statusCode = statisCode;
+    public Response(StatusCode code) {
+        this(code, null);
+    }
+
+    public Response(StatusCode code, Object body) {
+        this.statusCode = code;
+        if(body != null)
+            this.body = super.gson.toJson(body);
+        else 
+            this.body = "{}";
     }
 }

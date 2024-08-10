@@ -1,21 +1,18 @@
 package Utils;
 
-import java.io.Serializable;
-
-public class Request implements Serializable {
+public class Request extends Message {
     public enum Methods {
         GET,
         POST,
         DELETE,
         PATCH
     }
-
-    private static final long serialVersionUID = 1L;
     public String url;
     public Methods method;
 
-    public Request(String url, Methods method) {
+    public Request(String url, Methods method, Object body) {
         this.url = url;
         this.method = method;
+        this.body = super.gson.toJson(body);
     }
 }

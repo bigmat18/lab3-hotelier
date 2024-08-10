@@ -6,7 +6,7 @@ FLAGS = -Xlint
 all: server client
 
 server: 
-	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Server/*.java $(SRC_DIR)/Server/Endpoints/*.java $(SRC_DIR)/Server/Tables/*.java $(SRC_DIR)/Utils/*.java -d $(BIN_DIR)
+	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Server/*.java $(SRC_DIR)/Server/Endpoints/*.java $(SRC_DIR)/Utils/*.java -d $(BIN_DIR)
 
 client: 
 	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Client/*.java $(SRC_DIR)/Utils/*.java  -d $(BIN_DIR)

@@ -1,4 +1,4 @@
-package Server.Tables;
+package Utils;
 
 import java.util.ArrayList;
 import java.util.Map;

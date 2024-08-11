@@ -42,7 +42,12 @@ public class ClientMain {
 
             while (running) {
                 System.out.println("\n================================");
-                int choose = Keyboard.IntReader("1) Registration\n2) Login\n3) Logut\n4) View hotels\nChoose option (0 to quit):");
+                int choose = Keyboard.IntReader("1) Registration\n" +
+                                                "2) Login\n" + 
+                                                "3) Logut\n" +
+                                                "4) Search hotels\n" + 
+                                                "5) Search all hotels\n" +
+                                                "Choose option (0 to quit):");
                 switch(choose) {
                     case 0: {
                         running = false;
@@ -79,13 +84,26 @@ public class ClientMain {
                         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                     }
                     case 4: {
-                        viewHotels(output);
+                        searchHotels(output);
 
                         Response response = Message.getMessage(Response.class, read(input));
                         if(response.statusCode != Response.StatusCode.OK)
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
 
                         for(JsonElement element : response.getBody().getAsJsonArray()) {
+                            Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());
+                            System.out.println("---------------------------------------------");
+                            System.out.println(hotel.toString());
+                        }
+                    }
+                    case 5: {
+                        searchAllHotels(output);
+
+                        Response response = Message.getMessage(Response.class, read(input));
+                        if (response.statusCode != Response.StatusCode.OK)
+                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+
+                        for (JsonElement element : response.getBody().getAsJsonArray()) {
                             Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());
                             System.out.println("---------------------------------------------");
                             System.out.println(hotel.toString());
@@ -128,13 +146,24 @@ public class ClientMain {
         write(output, request.getString());
     }
 
-    public static void viewHotels(DataOutputStream output) throws IOException {
+    public static void searchHotels(DataOutputStream output) throws IOException {
         String name = Keyboard.StringReader("Filter by name (empty if dont't want): ");
         String city = Keyboard.StringReader("Filter by city (empty if dont't want): ");
 
         JsonObject obj = new JsonObject();
         if(!name.equals("")) obj.addProperty("name", name);
         if(!city.equals("")) obj.addProperty("city", city);
+
+        Request request = new Request("/hotels", Request.Methods.GET, obj);
+        write(output, request.getString());
+    }
+
+    public static void searchAllHotels(DataOutputStream output) throws IOException {
+        String city = Keyboard.StringReader("Insert city: ");
+
+        JsonObject obj = new JsonObject();
+        obj.addProperty("city", city);
+        obj.addProperty("ordering", true);
 
         Request request = new Request("/hotels", Request.Methods.GET, obj);
         write(output, request.getString());

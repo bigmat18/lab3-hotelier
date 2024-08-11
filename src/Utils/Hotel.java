@@ -38,6 +38,8 @@ public class Hotel {
 
     public String getCity() { return this.city; }
 
+    public int getRate() { return this.rate; }
+
     public String toString() { 
         return "Name: " + this.name + 
                "\nCity: " + this.city + 

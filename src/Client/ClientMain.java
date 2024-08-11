@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -17,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 
+import Utils.Hotel;
 import Utils.Message;
 import Utils.Request;
 import Utils.Response;
@@ -40,7 +42,7 @@ public class ClientMain {
 
             while (running) {
                 System.out.println("\n================================");
-                int choose = Keyboard.IntReader("1) Registration\n2) Login\n3) Logut\nChoose option (0 to quit):");
+                int choose = Keyboard.IntReader("1) Registration\n2) Login\n3) Logut\n4) View hotels\nChoose option (0 to quit):");
                 switch(choose) {
                     case 0: {
                         running = false;
@@ -50,7 +52,7 @@ public class ClientMain {
                     case 1: {
                         registration(output);
 
-                        Response response = Message.getMessage(Response.class, input.readUTF());
+                        Response response = Message.getMessage(Response.class, read(input));
                         if(response.statusCode.equals(Response.StatusCode.CREATED))
                             isLogged = true;
 
@@ -60,7 +62,7 @@ public class ClientMain {
                     case 2: {
                         login(output);
 
-                        Response response = Message.getMessage(Response.class, input.readUTF());
+                        Response response = Message.getMessage(Response.class, read(input));
                         if (response.statusCode.equals(Response.StatusCode.OK))
                             isLogged = true;
 
@@ -70,11 +72,24 @@ public class ClientMain {
                     case 3: {
                         logout(output);
 
-                        Response response = Message.getMessage(Response.class, input.readUTF());
+                        Response response = Message.getMessage(Response.class, read(input));
                         if (response.statusCode.equals(Response.StatusCode.OK))
                             isLogged = false;
 
                         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+                    }
+                    case 4: {
+                        viewHotels(output);
+
+                        Response response = Message.getMessage(Response.class, read(input));
+                        if(response.statusCode != Response.StatusCode.OK)
+                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+
+                        for(JsonElement element : response.getBody().getAsJsonArray()) {
+                            Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());
+                            System.out.println("---------------------------------------------");
+                            System.out.println(hotel.toString());
+                        }
                     }
                 }
 
@@ -93,8 +108,7 @@ public class ClientMain {
         obj.addProperty("username", username);
 
         Request request = new Request("/login", Request.Methods.POST, obj);
-        output.writeUTF(request.getString());
-        output.flush();
+        write(output, request.getString());
     }
 
     public static void registration(DataOutputStream output) throws IOException{
@@ -106,13 +120,37 @@ public class ClientMain {
         obj.addProperty("username", username);
 
         Request request = new Request("/registration", Request.Methods.POST, obj);
-        output.writeUTF(request.getString());
-        output.flush();
+        write(output, request.getString());
     }
 
     public static void logout(DataOutputStream output) throws IOException {
         Request request = new Request("/logout", Request.Methods.POST);
-        output.writeUTF(request.getString());
+        write(output, request.getString());
+    }
+
+    public static void viewHotels(DataOutputStream output) throws IOException {
+        String name = Keyboard.StringReader("Filter by name (empty if dont't want): ");
+        String city = Keyboard.StringReader("Filter by city (empty if dont't want): ");
+
+        JsonObject obj = new JsonObject();
+        if(!name.equals("")) obj.addProperty("name", name);
+        if(!city.equals("")) obj.addProperty("city", city);
+
+        Request request = new Request("/hotels", Request.Methods.GET, obj);
+        write(output, request.getString());
+    }
+
+    private static String read(DataInputStream input) throws IOException {
+        int length = input.readInt();
+        byte[] stringBytes = new byte[length];
+        input.readFully(stringBytes);
+        return new String(stringBytes, StandardCharsets.UTF_8);
+    }
+
+    private static void write(DataOutputStream output, String data) throws IOException {
+        byte[] bytesResponse = data.getBytes();
+        output.writeInt(bytesResponse.length);
+        output.write(bytesResponse);
         output.flush();
     }
 }

@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+import Server.Endpoints.Hotels;
 import Server.Endpoints.Login;
 import Server.Endpoints.Logout;
 import Server.Endpoints.Registration;
@@ -22,6 +23,7 @@ public class Router {
         endpoints.put("/login", new Login());
         endpoints.put("/registration", new Registration());
         endpoints.put("/logout", new Logout());
+        endpoints.put("/hotels", new Hotels());
     }
 
     public static Response routing(Request request) throws IOException{

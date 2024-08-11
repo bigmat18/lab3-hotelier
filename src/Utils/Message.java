@@ -18,7 +18,6 @@ public class Message {
     public Message(String msg) {
         JsonObject obj = new JsonObject();
         obj.addProperty("message", msg);
-
         this.body = obj.toString();
     }
 

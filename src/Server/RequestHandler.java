@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -33,15 +34,35 @@ public class RequestHandler implements Runnable {
              DataInputStream input = new DataInputStream(connection.getInputStream())) {
 
             while (this.running) {
-                Request request = Message.getMessage(Request.class, input.readUTF());
-                Response response = Router.routing(request);
-                output.writeUTF(response.getString());
+                try {
+                    Request request = Message.getMessage(Request.class, this.read(input));
+                    Response response = Router.routing(request);
+
+                    this.write(output, response.getString());
+                } catch (Exception e) {
+                    Response response = new Response(Response.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
+
+                    this.write(output, response.getString());
+                    e.printStackTrace();
+                }
             }
             this.connection.close();
-        } catch (EOFException e) {
+        } catch (IOException e) {
             System.out.println("Connection closed with " + connection.getInetAddress());
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+    }
+
+    private String read(DataInputStream input) throws IOException {
+        int length = input.readInt();
+        byte[] stringBytes = new byte[length];
+        input.readFully(stringBytes);
+        return new String(stringBytes, StandardCharsets.UTF_8);
+    }
+
+    private void write(DataOutputStream output, String data) throws IOException {
+        byte[] bytesResponse = data.getBytes();
+        output.writeInt(bytesResponse.length);
+        output.write(bytesResponse);
+        output.flush();
     }
 }

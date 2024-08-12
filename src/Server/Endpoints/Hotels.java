@@ -23,7 +23,6 @@ public class Hotels extends Endpoint {
         ArrayList<Hotel> hotels = Database.select(Hotel.class, 
                                                   entry -> (name == null || entry.getValue().getName().equals(name.getAsString())) &&
                                                            (city == null || entry.getValue().getCity().equals(city.getAsString())));
-
         if(ordering != null && ordering.getAsBoolean())
             hotels.sort(Comparator.comparing(Hotel::getRate).reversed());
         return new Response(Response.StatusCode.OK, hotels);

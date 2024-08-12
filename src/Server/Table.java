@@ -56,37 +56,42 @@ public class Table<T> {
     }
 
     public void unloadData(Gson gson) throws IOException{
-        this.saveData(gson);
-        this.map.clear();
-    }
-    
-    public void saveData(Gson gson) throws IOException{
         try (FileWriter writer = new FileWriter(this.file)) {
-            gson.toJson(map.values(), writer);
+            synchronized (this.map) {
+                gson.toJson(map.values(), writer);
+            }
         }
     }
 
     public int getLastId() {
-        if(this.map.isEmpty())
-            return 0;
-        return this.map.lastKey();
+        synchronized(this.map) {
+            if(this.map.isEmpty())
+                return 0;
+            return this.map.lastKey();
+        }
     }
 
     public boolean insert(T element) {
-        if(this.map.put(this.map.size() + 1, element) == null)
-            return false;
-        return true;
+        synchronized(this.map) {
+            if(this.map.put(this.map.size() + 1, element) == null)
+                return false;
+            return true;
+        }
     }
 
     public boolean delete(Predicate<Map.Entry<Integer, T>> predicate) {
-        return this.map.entrySet().removeIf(predicate);
+        synchronized(this.map) {
+            return this.map.entrySet().removeIf(predicate);
+        }
     }
 
     public ArrayList<T> select(Predicate<Map.Entry<Integer, T>> predicate) {
-        return this.map.entrySet()
-                       .stream()
-                       .filter(predicate)
-                       .map(Map.Entry::getValue)
-                       .collect(Collectors.toCollection(ArrayList::new));
+        synchronized(this.map) {
+            return this.map.entrySet()
+                           .stream()
+                           .filter(predicate)
+                           .map(Map.Entry::getValue)
+                           .collect(Collectors.toCollection(ArrayList::new));
+        }
     }
 }

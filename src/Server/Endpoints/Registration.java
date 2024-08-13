@@ -16,8 +16,7 @@ public class Registration extends Endpoint {
     @Override
     public Response POST(Request request) {
         JsonObject data = request.getBody().getAsJsonObject();
-        ArrayList<User> users = Database.select(User.class, entry -> entry.getValue()
-                                                                                    .getUsername()
+        ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername()
                                                                                     .equals(data.get("username")
                                                                                                 .getAsString()));
 

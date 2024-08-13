@@ -48,12 +48,12 @@ public class Database {
         }
     }
     
-    public static <T> boolean delete(Class<T> tableName, Predicate<Map.Entry<Integer, T>> predicate) {
+    public static <T> boolean delete(Class<T> tableName, Predicate<T> predicate) {
         Table<T> table = tables.get(tableName.getSimpleName());
         return table.delete(predicate);
     }
     
-    public static <T> ArrayList<T> select(Class<T> tableName, Predicate<Map.Entry<Integer, T>> predicate) {
+    public static <T> ArrayList<T> select(Class<T> tableName, Predicate<T> predicate) {
         Table<T> table = tables.get(tableName.getSimpleName());
         return table.select(predicate);
     }
@@ -72,23 +72,13 @@ public class Database {
     }
     
     private static <T> T instanceTableElement(Class<T> typeClass, Object... args) throws Exception {
-        Class<?>[] parameter = new Class[args.length + 1];
-        parameter[0] = int.class;
+        Class<?>[] parameter = new Class[args.length];
     
-        for (int i = 1; i < parameter.length; i++)
-            parameter[i] = args[i - 1].getClass();
+        for (int i = 0; i < parameter.length; i++)
+            parameter[i] = args[i].getClass();
     
         Constructor<T> constructor = typeClass.getConstructor(parameter);
-    
-        Object[] newArgs = new Object[parameter.length];
-        newArgs[0] = getNewID(typeClass);
-    
-        System.arraycopy(args, 0, newArgs, 1, args.length);
-        T instance = constructor.newInstance(newArgs);
+        T instance = constructor.newInstance(args);
         return instance;
-    }
-    
-    public static <T> int getNewID(Class<T> tableName) {
-        return tables.get(tableName.getSimpleName()).getLastId() + 1;
     }
 }

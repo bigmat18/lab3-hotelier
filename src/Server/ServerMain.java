@@ -45,7 +45,7 @@ public class ServerMain {
                 pool.execute(new RequestHandler(connection));
             }
         } catch(Exception e) {
-            System.err.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 }

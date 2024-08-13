@@ -37,52 +37,66 @@ public class ClientMain {
     public static void main(String[] args) {
 
         try (Socket socket = new Socket(HOST, PORT);
-             DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-             DataInputStream input = new DataInputStream(socket.getInputStream())) {
+                DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                DataInputStream input = new DataInputStream(socket.getInputStream())) {
 
             System.out.println("Client connected to: " + HOST + ":" + PORT);
 
+            System.out.print("\n" + //
+                    "  _    _       _       _ _           \n" + //
+                    " | |  | |     | |     | (_)          \n" + //
+                    " | |__| | ___ | |_ ___| |_  ___ _ __ \n" + //
+                    " |  __  |/ _ \\| __/ _ \\ | |/ _ \\ '__|\n" + //
+                    " | |  | | (_) | ||  __/ | |  __/ |   \n" + //
+                    " |_|  |_|\\___/ \\__\\___|_|_|\\___|_|   \n" + //
+                    "                                     \n" + //
+                    "                                     \n" + //
+                    "");
+            System.out.println("Digit one of following command or 'quit' to exit.\n" +
+                    "\tlogin\n" +
+                    "\tregistraion\n" +
+                    "\tlogout\n" +
+                    "\tsearchHotel\n" +
+                    "\tsearchAllHotel\n" +
+                    "\tinsertReview\n" +
+                    "\thelp");
+
             while (running) {
-                System.out.println("\n================================");
-                int choose = Keyboard.IntReader("1) Registration\n" +
-                                                "2) Login\n" + 
-                                                "3) Logut\n" +
-                                                "4) Search hotels\n" + 
-                                                "5) Search all hotels\n" +
-                                                "6) Insert review\n" +
-                                                "Choose option (0 to quit):");
-                switch(choose) {
-                    case 0: {
+                String choose = Keyboard.StringReader(">");
+                switch (choose) {
+                    case "quit": {
                         running = false;
                         System.out.println("Quitting...");
                         break;
                     }
-                    case 1: {
+                    case "login": {
                         registration(output);
 
                         Response response = Message.getMessage(Response.class, read(input));
-                        if(response.statusCode.equals(Response.StatusCode.CREATED)) {
+                        if (response.statusCode.equals(Response.StatusCode.CREATED)) {
                             isLogged = true;
                             username = response.getBody().getAsJsonObject().get("message").getAsString();
-                            System.out.println("Loegged successfull with " + response.getBody().getAsJsonObject().get("message").getAsString());
+                            System.out.println("Loegged successfull with "
+                                    + response.getBody().getAsJsonObject().get("message").getAsString());
                         }
                         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         break;
                     }
-                    case 2: {
+                    case "registration": {
                         login(output);
 
                         Response response = Message.getMessage(Response.class, read(input));
                         if (response.statusCode.equals(Response.StatusCode.OK)) {
                             isLogged = true;
                             username = response.getBody().getAsJsonObject().get("message").getAsString();
-                            System.out.println("Loegged successfull with " + response.getBody().getAsJsonObject().get("message").getAsString());
+                            System.out.println("Loegged successfull with "
+                                    + response.getBody().getAsJsonObject().get("message").getAsString());
                         } else {
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         }
                         break;
                     }
-                    case 3: {
+                    case "logout": {
                         logout(output);
 
                         Response response = Message.getMessage(Response.class, read(input));
@@ -90,21 +104,25 @@ public class ClientMain {
                             isLogged = false;
 
                         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+
+                        break;
                     }
-                    case 4: {
+                    case "searchHotel": {
                         searchHotels(output);
 
                         Response response = Message.getMessage(Response.class, read(input));
-                        if(response.statusCode != Response.StatusCode.OK)
+                        if (response.statusCode != Response.StatusCode.OK)
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
 
-                        for(JsonElement element : response.getBody().getAsJsonArray()) {
+                        for (JsonElement element : response.getBody().getAsJsonArray()) {
                             Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());
                             System.out.println("---------------------------------------------");
                             System.out.println(hotel.toString());
                         }
+
+                        break;
                     }
-                    case 5: {
+                    case "searchAllHotel": {
                         searchAllHotels(output);
 
                         Response response = Message.getMessage(Response.class, read(input));
@@ -117,8 +135,8 @@ public class ClientMain {
                             System.out.println(hotel.toString());
                         }
                     }
-                    case 6: {
-                        if(!isLogged)
+                    case "insertReview": {
+                        if (!isLogged)
                             System.out.print("You must be logged");
                         else {
                             insertReview(output);
@@ -126,16 +144,31 @@ public class ClientMain {
                             Response response = Message.getMessage(Response.class, read(input));
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         }
+
+                        break;
+                    }
+                    case "help": {
+                        System.out.println("Digit one of following command or 'quit' to exit.\n" +
+                                "\tlogin\n" +
+                                "\tregistraion\n" +
+                                "\tlogout\n" +
+                                "\tsearchHotel\n" +
+                                "\tsearchAllHotel\n" +
+                                "\tinsertReview\n" +
+                                "\thelp");
+                        break;
+                    }
+                    default: {
+                        System.out.println("Invalid option");
                     }
                 }
-
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }
 
-    public static void login(DataOutputStream output) throws IOException{
+    public static void login(DataOutputStream output) throws IOException {
         JsonObject obj = new JsonObject();
         String username = Keyboard.StringReader("username: ");
         String password = Keyboard.StringReader("password: ");
@@ -147,7 +180,7 @@ public class ClientMain {
         write(output, request.getString());
     }
 
-    public static void registration(DataOutputStream output) throws IOException{
+    public static void registration(DataOutputStream output) throws IOException {
         JsonObject obj = new JsonObject();
         String username = Keyboard.StringReader("username: ");
         String password = Keyboard.StringReader("password: ");
@@ -169,8 +202,10 @@ public class ClientMain {
         String city = Keyboard.StringReader("City (empty if dont't want): ");
 
         JsonObject obj = new JsonObject();
-        if(!name.equals("")) obj.addProperty("name", name);
-        if(!city.equals("")) obj.addProperty("city", city);
+        if (!name.equals(""))
+            obj.addProperty("name", name);
+        if (!city.equals(""))
+            obj.addProperty("city", city);
 
         Request request = new Request("/hotels", Request.Methods.GET, obj);
         write(output, request.getString());

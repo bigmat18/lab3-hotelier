@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -31,6 +32,7 @@ public class ClientMain {
     private static final int PORT = 8080;
     private static boolean running = true;
     private static boolean isLogged = false;
+    private static String username = "";
 
     public static void main(String[] args) {
 
@@ -47,6 +49,7 @@ public class ClientMain {
                                                 "3) Logut\n" +
                                                 "4) Search hotels\n" + 
                                                 "5) Search all hotels\n" +
+                                                "6) Insert review\n" +
                                                 "Choose option (0 to quit):");
                 switch(choose) {
                     case 0: {
@@ -58,9 +61,11 @@ public class ClientMain {
                         registration(output);
 
                         Response response = Message.getMessage(Response.class, read(input));
-                        if(response.statusCode.equals(Response.StatusCode.CREATED))
+                        if(response.statusCode.equals(Response.StatusCode.CREATED)) {
                             isLogged = true;
-
+                            username = response.getBody().getAsJsonObject().get("message").getAsString();
+                            System.out.println("Loegged successfull with " + response.getBody().getAsJsonObject().get("message").getAsString());
+                        }
                         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         break;
                     }
@@ -68,10 +73,13 @@ public class ClientMain {
                         login(output);
 
                         Response response = Message.getMessage(Response.class, read(input));
-                        if (response.statusCode.equals(Response.StatusCode.OK))
+                        if (response.statusCode.equals(Response.StatusCode.OK)) {
                             isLogged = true;
-
-                        System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+                            username = response.getBody().getAsJsonObject().get("message").getAsString();
+                            System.out.println("Loegged successfull with " + response.getBody().getAsJsonObject().get("message").getAsString());
+                        } else {
+                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+                        }
                         break;
                     }
                     case 3: {
@@ -107,6 +115,16 @@ public class ClientMain {
                             Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());
                             System.out.println("---------------------------------------------");
                             System.out.println(hotel.toString());
+                        }
+                    }
+                    case 6: {
+                        if(!isLogged)
+                            System.out.print("You must be logged");
+                        else {
+                            insertReview(output);
+
+                            Response response = Message.getMessage(Response.class, read(input));
+                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         }
                     }
                 }
@@ -147,8 +165,8 @@ public class ClientMain {
     }
 
     public static void searchHotels(DataOutputStream output) throws IOException {
-        String name = Keyboard.StringReader("Filter by name (empty if dont't want): ");
-        String city = Keyboard.StringReader("Filter by city (empty if dont't want): ");
+        String name = Keyboard.StringReader("Name (empty if dont't want): ");
+        String city = Keyboard.StringReader("City (empty if dont't want): ");
 
         JsonObject obj = new JsonObject();
         if(!name.equals("")) obj.addProperty("name", name);
@@ -159,13 +177,38 @@ public class ClientMain {
     }
 
     public static void searchAllHotels(DataOutputStream output) throws IOException {
-        String city = Keyboard.StringReader("Insert city: ");
+        String city = Keyboard.StringReader("City: ");
 
         JsonObject obj = new JsonObject();
         obj.addProperty("city", city);
         obj.addProperty("ordering", true);
 
         Request request = new Request("/hotels", Request.Methods.GET, obj);
+        write(output, request.getString());
+    }
+
+    public static void insertReview(DataOutputStream output) throws IOException {
+        String hotelCity = Keyboard.StringReader("City: ");
+        String hotelName = Keyboard.StringReader("Name: ");
+
+        int rate = Keyboard.IntReader("Rate: ");
+        int positionRate = Keyboard.IntReader("Position rate: ");
+        int cleaningRate = Keyboard.IntReader("Cleaning rate: ");
+        int servicesRate = Keyboard.IntReader("Service rate: ");
+        int priceRate = Keyboard.IntReader("Price rate: ");
+
+        JsonObject obj = new JsonObject();
+        obj.addProperty("hotelCity", hotelCity);
+        obj.addProperty("hotelName", hotelName);
+        obj.addProperty("username", username);
+
+        obj.addProperty("rate", rate);
+        obj.addProperty("positionRate", positionRate);
+        obj.addProperty("cleaningRate", cleaningRate);
+        obj.addProperty("servicesRate", servicesRate);
+        obj.addProperty("priceRate", priceRate);
+
+        Request request = new Request("/reviews", Request.Methods.POST, obj);
         write(output, request.getString());
     }
 

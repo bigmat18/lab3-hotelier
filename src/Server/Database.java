@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import com.google.gson.Gson;
 
 import Utils.Hotel;
+import Utils.Review;
 import Utils.User;
 
 public class Database {
@@ -23,6 +24,7 @@ public class Database {
     public static void inizialize() throws IOException {
         addTable(User.class, gson);
         addTable(Hotel.class, gson);
+        addTable(Review.class, gson);
     }
 
     public static void shutdown() {
@@ -74,8 +76,10 @@ public class Database {
     private static <T> T instanceTableElement(Class<T> typeClass, Object... args) throws Exception {
         Class<?>[] parameter = new Class[args.length];
     
-        for (int i = 0; i < parameter.length; i++)
+        for (int i = 0; i < parameter.length; i++) {
             parameter[i] = args[i].getClass();
+        }
+            
     
         Constructor<T> constructor = typeClass.getConstructor(parameter);
         T instance = constructor.newInstance(args);

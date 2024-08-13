@@ -26,7 +26,7 @@ public class Login extends Endpoint{
         if(!users.get(0).getPassword().equals(data.get("password").getAsString()))
             return new Response(Response.StatusCode.BAD_REQUEST, "Password incorrect");
 
-        return new Response(Response.StatusCode.OK, "Login successfull");
+        return new Response(Response.StatusCode.OK, data.get("username").getAsString());
     }
     
 }

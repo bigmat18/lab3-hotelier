@@ -1,30 +1,41 @@
 package Utils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Review {
-    int rate;
-    int positionRate;
-    int cleanRate;
-    int serviceRate;
-    int priceRate;
-    String usernameCreator; 
-    LocalDateTime dateCreation;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+    private int rate;
+    private int positionRate;
+    private int cleaningRate;
+    private int serviceRate;
+    private int priceRate;
+    private String usernameCreator; 
+    private LocalDateTime dateCreation;
+
+    private String hotelName;
+    private String hotelCity;
 
     Review(int rate,
            int positionRate,
-           int cleanRate,
+           int cleaningRate,
            int serviceRate,
            int priceRate,
            String usernameCreator,
-           LocalDateTime dateCreation) 
+           String hotelName, 
+           String hotelCity) 
     {
         this.rate = rate;
         this.positionRate = positionRate;
-        this.cleanRate = cleanRate;
+        this.cleaningRate = cleaningRate;
         this.serviceRate = serviceRate;
         this.priceRate = priceRate;
         this.usernameCreator = usernameCreator;
-        this.dateCreation = dateCreation;
+        this.dateCreation = LocalDateTime.now();
+        
+        this.hotelName = hotelName;
+        this.hotelCity = hotelCity;
     }
 }

@@ -31,7 +31,7 @@ public class Registration extends Endpoint {
                             data.get("password").getAsString(), 
                             data.get("username").getAsString());
                             
-            return new Response(Response.StatusCode.CREATED, "User created");
+            return new Response(Response.StatusCode.CREATED, data.get("username").getAsString());
         } catch(Exception e) {
             return new Response(Response.StatusCode.BAD_REQUEST,  e.getMessage());
         }

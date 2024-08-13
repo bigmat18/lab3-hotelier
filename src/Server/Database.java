@@ -77,7 +77,10 @@ public class Database {
         Class<?>[] parameter = new Class[args.length];
     
         for (int i = 0; i < parameter.length; i++) {
-            parameter[i] = args[i].getClass();
+            if (args[i] instanceof Integer)
+                parameter[i] = int.class;
+            else
+                parameter[i] = args[i].getClass();
         }
             
     

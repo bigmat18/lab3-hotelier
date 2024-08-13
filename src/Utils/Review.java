@@ -13,12 +13,12 @@ public class Review {
     private int serviceRate;
     private int priceRate;
     private String usernameCreator; 
-    private LocalDateTime dateCreation;
+    private String dateCreation;
 
     private String hotelName;
     private String hotelCity;
 
-    Review(int rate,
+    public Review(int rate,
            int positionRate,
            int cleaningRate,
            int serviceRate,
@@ -33,9 +33,13 @@ public class Review {
         this.serviceRate = serviceRate;
         this.priceRate = priceRate;
         this.usernameCreator = usernameCreator;
-        this.dateCreation = LocalDateTime.now();
+        this.dateCreation = LocalDateTime.now().format(formatter);
         
         this.hotelName = hotelName;
         this.hotelCity = hotelCity;
+    }
+
+    public LocalDateTime getDateCreation() {
+        return LocalDateTime.parse(this.dateCreation, formatter);
     }
 }

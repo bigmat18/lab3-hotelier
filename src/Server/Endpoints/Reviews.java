@@ -50,6 +50,7 @@ public class Reviews extends Endpoint {
 
             return new Response(Response.StatusCode.CREATED, "Review added");
         } catch(Exception e) {
+            e.printStackTrace();
             return new Response(Response.StatusCode.BAD_REQUEST, e.getMessage());
         }
 

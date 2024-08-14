@@ -24,7 +24,7 @@ public class Registration extends Endpoint {
             return new Response(Response.StatusCode.BAD_REQUEST, "Username altredy exists");
 
         if(!User.isPasswordValid(data.get("password").getAsString()))
-            return new Response(Response.StatusCode.BAD_REQUEST, "Password not valid");
+            return new Response(Response.StatusCode.BAD_REQUEST, "Password not valid (it must contains a capital letter, a number, a special character and it must be at least 8 characters long)");
 
         try {
             Database.insert(User.class,

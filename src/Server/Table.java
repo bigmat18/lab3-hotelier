@@ -37,22 +37,18 @@ public class Table<T> {
         this.isAlredyCreated = !this.file.exists();
         this.file.createNewFile();
     }
-
-    public String toString() {
-        return this.fileName.replaceAll(".json", "");
-    }
-
+    
     public void loadData(Class<T> table, Gson gson) throws IOException{
         try (FileReader reader = new FileReader(this.file, StandardCharsets.UTF_8)) {
             JsonArray jsonArrayOfItems = JsonParser.parseReader(reader).getAsJsonArray();
-
+            
             for (JsonElement element : jsonArrayOfItems) {
                 T data = gson.fromJson(element, table);
                 this.elements.add(data);
             }
         }
     }
-
+    
     public void unloadData(Gson gson) throws IOException{
         try (FileWriter writer = new FileWriter(this.file)) {
             synchronized (this.elements) {
@@ -60,28 +56,33 @@ public class Table<T> {
             }
         }
     }
-
+    
     public boolean insert(T element) {
         synchronized(this.elements) {
             return this.elements.add(element);
         }
     }
-
+    
     public boolean delete(Predicate<T> predicate) {
         synchronized(this.elements) {
             return this.elements.removeIf(predicate);
         }
     }
-
+    
     public ArrayList<T> select(Predicate<T> predicate) {
         synchronized(this.elements) {
             return this.elements.stream()
-                                .filter(predicate)
-                                .collect(Collectors.toCollection(ArrayList::new));
+            .filter(predicate)
+            .collect(Collectors.toCollection(ArrayList::new));
         }
     }
-
+    
     public void sort(Comparator<T> compare) {
         Collections.sort(this.elements, compare);
+    }
+    
+    @Override
+    public String toString() {
+        return this.fileName.replaceAll(".json", "");
     }
 }

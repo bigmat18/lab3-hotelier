@@ -2,8 +2,10 @@ package Utils;
 
 public class User{
     private static final String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
+    
     private String password;
     private String username;
+    private int level = 0;
 
     public User(String password, String username) {
         this.username = username;
@@ -26,6 +28,7 @@ public class User{
         return false;
     }
 
+    @Override
     public String toString() {
         return "User: " + this.username;
     }

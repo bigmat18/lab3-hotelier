@@ -4,11 +4,9 @@ import com.google.gson.JsonObject;
 
 public class Request extends Message {
     public enum Methods {
-        GET,
-        POST,
-        DELETE,
-        PATCH
-    }
+        GET, POST, DELETE, PATCH
+    };
+    
     public String url;
     public Methods method;
 

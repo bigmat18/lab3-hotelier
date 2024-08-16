@@ -11,13 +11,11 @@ public class Hotel {
     private String description;
     private String city;
     private String phone;
-    private ArrayList<String> services;
-    private Map<String, Float> ratings;
-    
     private float rate;
-    private final Object lockRate = new Object();
-
-    public transient float rank = 0;
+    private Map<String, Float> ratings;
+    private ArrayList<String> services;
+    
+    public  transient float rank = 0;
 
     public Hotel(int id,
                  String name,
@@ -42,49 +40,27 @@ public class Hotel {
 
     public String getCity() { return this.city; }
 
-    public synchronized float getRate() { 
-        return this.rate; 
-    }
+    public synchronized float getRate() { return this.rate; }
     
     public synchronized void setRate(float rate) { 
         this.rate = (this.rate + rate) / (this.rate == 0 ? 1 : 2); 
     }
+    public synchronized Map<String, Float> getRatings() { return this.ratings; }
 
-    public Map<String, Float> getRatings() {
-        synchronized(this.ratings) {
-            return this.ratings;
-        }
-    }
+    public synchronized void setCleaningRate(float rate) { this.setRatings("cleaning", rate); }
 
-    public void setCleaningRate(float rate) {
-        synchronized (this.ratings) {
-            this.setRatings("cleaning", rate);
-        }
-    }
+    public synchronized void setPositionRate(float rate) { this.setRatings("position", rate); }
 
-    public void setPositionRate(float rate) {
-        synchronized (this.ratings) {
-            this.setRatings("position", rate);
-        }
-    }
+    public void setServicesRate(float rate) { this.setRatings("services", rate); }
 
-    public void setServicesRate(float rate) {
-        synchronized (this.ratings) {
-            this.setRatings("services", rate);
-        }
-    }
-
-    public void setQualityRate(float rate) {
-        synchronized (this.ratings) {
-            this.setRatings("quality", rate);
-        }
-    }
+    public void setQualityRate(float rate) { this.setRatings("quality", rate); }
 
     private void setRatings(String name, float rate) {
         float value = this.ratings.get(name);
         this.ratings.put(name, (value + rate) / (value == 0 ? 1 : 2));
     }
 
+    @Override
     public String toString() {
         return  "Rank: " + this.rank +
                 "\nName: " + this.name + 

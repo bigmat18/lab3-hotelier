@@ -9,11 +9,9 @@ import com.google.gson.JsonObject;
 
 public class Message {
     protected static transient Gson gson = new Gson();
-    protected String body;
+    protected String body = "{}";
 
-    public Message() {
-        this.body = "{}";
-    }
+    public Message() {}
 
     public Message(String msg) {
         JsonObject obj = new JsonObject();
@@ -29,23 +27,13 @@ public class Message {
         this.body = this.gson.toJson(body);
     }
 
-    public static<T> T getMessage(Class<T> clazz, String str) {
-        return gson.fromJson(str, clazz);
-    }
+    public static <T> T getMessage(Class<T> clazz, String str) { return gson.fromJson(str, clazz); }
 
-    public String getString() {
-        return gson.toJson(this);
-    }
+    public String getString() { return gson.toJson(this); }
 
-    public String getRowBody() {
-        return this.body;
-    }
+    public String getRowBody() { return this.body; }
 
-    public JsonElement getBody() {
-        return gson.fromJson(this.body, JsonElement.class);
-    }
+    public JsonElement getBody() { return gson.fromJson(this.body, JsonElement.class); }
 
-    public <T> T getBody(Class<T> clazz) {
-        return gson.fromJson(this.body, clazz);
-    }
+    public <T> T getBody(Class<T> clazz) { return gson.fromJson(this.body, clazz); }
 }

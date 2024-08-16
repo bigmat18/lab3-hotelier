@@ -20,28 +20,21 @@ public class Response extends Message {
         INTERNAL_SERVER_ERROR           (500, "Internal Server Error"),
         NOT_IMPLEMENTED                 (501, "Not Implemented");
 
-        private final int code;
-        private final String reasonPhrase;
+        public final int code;
+        public final String reasonPhrase;
 
         StatusCode(int code, String reasonPhrase) {
             this.code = code;
             this.reasonPhrase = reasonPhrase;
         }
 
-        public int getCode() { return code; }
-
-        public String getReasonPhrase() { return reasonPhrase; }
-
         @Override
         public String toString() { return code + " " + reasonPhrase; }
     }
 
-
     public StatusCode statusCode;
 
-    public Response(StatusCode code) {
-        this.statusCode = code;
-    }
+    public Response(StatusCode code) { this.statusCode = code; }
 
     public Response(StatusCode code, String message) {
         super(message);

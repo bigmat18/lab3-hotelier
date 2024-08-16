@@ -12,6 +12,7 @@ public class Review {
     private int cleaningRate;
     private int serviceRate;
     private int priceRate;
+
     private String usernameCreator; 
     private String dateCreation;
 
@@ -39,36 +40,19 @@ public class Review {
         this.hotelCity = hotelCity;
     }
 
-    public String getHotelName() {
-        return this.hotelName;
-    }
+    public String getHotelName() { return this.hotelName; }
 
-    public String getHotelCity() {
-        return this.hotelCity;
-    }
+    public String getHotelCity() { return this.hotelCity; }
 
-    public int getRate() {
-        return this.rate;
-    }
+    public int getRate() { return this.rate; }
 
-    public int getPositionRate() {
-        return this.positionRate;
-    }
+    public int getPositionRate() { return this.positionRate; }
 
-    public int getCleaningRate() {
-        return this.cleaningRate;
-    }
+    public int getCleaningRate() { return this.cleaningRate; }
 
-    public int getServiceRate() {
-        return this.serviceRate;
-    }
+    public int getServiceRate() { return this.serviceRate; }
 
-    public int getPriceRate() {
-        return this.priceRate;
-    }
+    public int getPriceRate() { return this.priceRate; }
 
-
-    public LocalDateTime getDateCreation() {
-        return LocalDateTime.parse(this.dateCreation, formatter);
-    }
+    public LocalDateTime getDateCreation() { return LocalDateTime.parse(this.dateCreation, formatter); }
 }

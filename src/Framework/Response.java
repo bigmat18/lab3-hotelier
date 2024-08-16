@@ -29,12 +29,16 @@ public class Response extends Message {
         }
 
         @Override
-        public String toString() { return code + " " + reasonPhrase; }
+        public String toString() { 
+            return code + " - " + reasonPhrase; 
+        }
     }
 
     public StatusCode statusCode;
 
-    public Response(StatusCode code) { this.statusCode = code; }
+    public Response(StatusCode code) { 
+        this.statusCode = code; 
+    }
 
     public Response(StatusCode code, String message) {
         super(message);

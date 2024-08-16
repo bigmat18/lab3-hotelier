@@ -48,6 +48,7 @@ public class Reviews extends Endpoint {
             hotels.get(0).setServicesRate(data.get("servicesRate").getAsInt());
             hotels.get(0).setServicesRate(data.get("priceRate").getAsInt());
 
+            users.get(0).incrementLevel();
             return new Response(Response.StatusCode.CREATED, "Review added");
         } catch(Exception e) {
             e.printStackTrace();

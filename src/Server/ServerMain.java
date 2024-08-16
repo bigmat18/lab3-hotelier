@@ -20,8 +20,6 @@ public class ServerMain {
     private static final int THREAD_POOL_NUM = 10;
     private static final int PORT = 8080;
 
-    private static final int timeout = 5000;
-
     public static void main(String[] args) throws Exception {
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -49,6 +47,7 @@ public class ServerMain {
             Router.addEndpoint("/logout", new Logout());
             Router.addEndpoint("/hotels", new Hotels());
             Router.addEndpoint("/reviews", new Reviews());
+            Router.addEndpoint("/badge", new Badge());
 
             Thread thread = new Thread(new Rank());
             thread.start();

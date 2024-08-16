@@ -23,9 +23,9 @@ public class Router {
                 case DELETE:    return ep.DELETE(request); 
                 case PATCH:     return ep.PATCH(request); 
                 default:        return new Response(Response.StatusCode.NOT_FOUND,
-                                                    Response.StatusCode.NOT_FOUND.reasonPhrase);
+                                                    Response.StatusCode.NOT_FOUND.toString());
             }
         } else                  return new Response(Response.StatusCode.NOT_FOUND,
-                                                    Response.StatusCode.NOT_FOUND.reasonPhrase);
+                                                    Response.StatusCode.NOT_FOUND.toString());
     }
 }

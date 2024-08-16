@@ -16,6 +16,26 @@ public class User{
 
     public String getUsername() { return this.username; }
 
+    public String getBandge() {
+        switch (this.level) {
+            case 0:
+                return "Recensore";
+            case 1:
+                return "Recensore esperto";
+            case 2:
+                return "Contributore";
+            case 3:
+                return "Contributore esperto";
+            case 4:
+                return "Contributore Super";
+        }
+        return "Error";
+    }
+
+    public void incrementLevel() {
+        if (this.level < 4) this.level++;
+    }
+
     public static boolean isPasswordValid(String password) {
         if(password.matches(passwordRegex))
             return true;

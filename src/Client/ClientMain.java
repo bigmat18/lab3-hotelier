@@ -49,7 +49,8 @@ public class ClientMain {
                                "   searchHotel\t\tView hotel for name and city\n" +
                                "   searchAllHotel\tView all hotel in a city\n" +
                                "   insertReview\t\tAdd a review for a hotel\n" +
-                               "   help\t\t\tView list of commands\n");
+                               "   help\t\t\tView list of commands\n" + 
+                               "   showBadge\t\tShow higher badge of user");
 
             while (running) {
                 String choose = Keyboard.StringReader(">");
@@ -79,7 +80,7 @@ public class ClientMain {
                         if (response.statusCode.equals(Response.StatusCode.OK)) {
                             isLogged = true;
                             username = response.getBody().getAsJsonObject().get("message").getAsString();
-                            System.out.println("Loegged successfull with "
+                            System.out.println("Logged successfull with "
                                     + response.getBody().getAsJsonObject().get("message").getAsString());
                         } else {
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
@@ -127,7 +128,7 @@ public class ClientMain {
                     }
                     case "insertReview": {
                         if (!isLogged)
-                            System.out.print("You must be logged");
+                            System.out.println("You must be logged");
                         else {
                             insertReview(output);
 
@@ -135,6 +136,18 @@ public class ClientMain {
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         }
 
+                        break;
+                    }
+                    case "showBadge": {
+                        if (!isLogged)
+                            System.out.println("You must be logged");
+                        else {
+                            showBadge(output);
+
+                            Response response = Message.read(Response.class, input);
+                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+                        }
+                        
                         break;
                     }
                     case "help": {
@@ -145,7 +158,8 @@ public class ClientMain {
                                 "   searchHotel\t\tView hotel for name and city\n" +
                                 "   searchAllHotel\tView all hotel in a city\n" +
                                 "   insertReview\t\tAdd a review for a hotel\n" +
-                                "   help\t\t\tView list of commands\n");
+                                "   help\t\t\tView list of commands\n" +
+                                "   showBadge\t\tShow higher badge of user");
                         break;
                     }
                     default: {
@@ -227,5 +241,11 @@ public class ClientMain {
         obj.addProperty("priceRate", priceRate);
 
         Message.write(Request.class, output, new Request("/reviews", Request.Methods.POST, obj));
+    }
+
+    public static void showBadge(DataOutputStream output) throws IOException {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("username", username);
+        Message.write(Request.class, output, new Request("/badge", Request.Methods.GET, obj));
     }
 }

@@ -33,14 +33,6 @@ public class Message {
 
     public static <T> T getMessage(Class<T> clazz, String str) { return gson.fromJson(str, clazz); }
 
-    public String getString() { return gson.toJson(this); }
-    
-    public String getRowBody() { return this.body; }
-    
-    public JsonElement getBody() { return gson.fromJson(this.body, JsonElement.class); }
-    
-    public <T> T getBody(Class<T> clazz) { return gson.fromJson(this.body, clazz); }
-    
     public static <T extends Message> T read(Class<T> clazz, DataInputStream input) throws IOException { 
         int length = input.readInt();
         byte[] stringBytes = new byte[length];
@@ -49,10 +41,16 @@ public class Message {
     }
 
     public static <T extends Message> void write(Class<T> clazz, DataOutputStream output, T data) throws IOException {
-        byte[] bytesResponse = data.getString().getBytes();
+        byte[] bytesResponse = data.getJsonString().getBytes();
         output.writeInt(bytesResponse.length);
         output.write(bytesResponse);
         output.flush();
     }
+
+    public String getJsonString() { return gson.toJson(this); }
+    
+    public String getRowBody() { return this.body; }
+    
+    public JsonElement getBody() { return gson.fromJson(this.body, JsonElement.class); }
     
 }

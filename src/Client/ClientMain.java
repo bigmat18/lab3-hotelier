@@ -1,29 +1,19 @@
 package Client;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Scanner;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonWriter;
 
-import Utils.Hotel;
-import Utils.Message;
-import Utils.Request;
-import Utils.Response;
-import Utils.User;
+import Data.Hotel;
+import Data.User;
+import Framework.Message;
+import Framework.Request;
+import Framework.Response;
 
 import java.net.Socket;
 
@@ -37,8 +27,8 @@ public class ClientMain {
     public static void main(String[] args) {
 
         try (Socket socket = new Socket(HOST, PORT);
-                DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-                DataInputStream input = new DataInputStream(socket.getInputStream())) {
+            DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+            DataInputStream input = new DataInputStream(socket.getInputStream())) {
 
             System.out.println("Client connected to: " + HOST + ":" + PORT);
 
@@ -164,7 +154,7 @@ public class ClientMain {
                 }
             }
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 

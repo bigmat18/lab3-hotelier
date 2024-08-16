@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,11 +53,16 @@ public class Database {
     
     public static <T> boolean delete(Class<T> tableName, Predicate<T> predicate) {
         Table<T> table = tables.get(tableName.getSimpleName());
+        if(table == null)
+            return false;
         return table.delete(predicate);
     }
     
     public static <T> ArrayList<T> select(Class<T> tableName, Predicate<T> predicate) {
         Table<T> table = tables.get(tableName.getSimpleName());
+        if (table == null)
+            return null;
+
         return table.select(predicate);
     }
 
@@ -67,9 +73,9 @@ public class Database {
     
     public static <T> T insert(Class<T> typeClass, T instance) throws Exception {
         Table<T> table = tables.get(typeClass.getSimpleName());
-        if (!table.insert(instance))
+        if (table == null || !table.insert(instance))
             return null;
-    
+
         return instance;
     }
     
@@ -87,5 +93,14 @@ public class Database {
         Constructor<T> constructor = typeClass.getConstructor(parameter);
         T instance = constructor.newInstance(args);
         return instance;
+    }
+
+    public static <T> boolean sort(Class<T> typeClass, Comparator<T> compare) {
+        Table<T> table = tables.get(typeClass.getSimpleName());
+        if(table == null)
+            return false;
+        
+        table.sort(compare);
+        return true;
     }
 }

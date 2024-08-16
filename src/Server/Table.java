@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.io.FileReader;
@@ -76,5 +79,9 @@ public class Table<T> {
                                 .filter(predicate)
                                 .collect(Collectors.toCollection(ArrayList::new));
         }
+    }
+
+    public void sort(Comparator<T> compare) {
+        Collections.sort(this.elements, compare);
     }
 }

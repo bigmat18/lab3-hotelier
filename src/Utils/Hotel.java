@@ -2,6 +2,8 @@ package Utils;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Hotel {
     private int id;
@@ -10,10 +12,12 @@ public class Hotel {
     private String city;
     private String phone;
     private ArrayList<String> services;
-    private int rate;
-    private Map<String, Integer> ratings;
-
+    private Map<String, Float> ratings;
+    
+    private float rate;
     private final Object lockRate = new Object();
+
+    public transient float rank = 0;
 
     public Hotel(int id,
                  String name,
@@ -21,8 +25,8 @@ public class Hotel {
                  String city,
                  String phone,
                  ArrayList<String> services,
-                 int rate,
-                 Map<String, Integer> ratings) 
+                 float rate,
+                 Map<String, Float> ratings) 
     {
         this.id = id;
         this.name = name;
@@ -34,60 +38,56 @@ public class Hotel {
         this.ratings = ratings;
     }
 
-    public int getId() { return this.id; }
-
     public String getName() { return this.name; }
 
     public String getCity() { return this.city; }
 
-    public int getRate() { 
-        synchronized(this.lockRate) {
-            return this.rate; 
-        }
+    public synchronized float getRate() { 
+        return this.rate; 
+    }
+    
+    public synchronized void setRate(float rate) { 
+        this.rate = (this.rate + rate) / (this.rate == 0 ? 1 : 2); 
     }
 
-    public Map<String, Integer> getRatings() {
+    public Map<String, Float> getRatings() {
         synchronized(this.ratings) {
             return this.ratings;
         }
     }
 
-    public void setRate(int rate) {
-        synchronized(this.ratings) {
-            this.rate = (this.rate + rate) / 2;
-        }
-    }
-
-    public void setCleaningRate(int rate) {
+    public void setCleaningRate(float rate) {
         synchronized (this.ratings) {
             this.setRatings("cleaning", rate);
         }
     }
 
-    public void setPositionRate(int rate) {
+    public void setPositionRate(float rate) {
         synchronized (this.ratings) {
             this.setRatings("position", rate);
         }
     }
 
-    public void setServicesRate(int rate) {
+    public void setServicesRate(float rate) {
         synchronized (this.ratings) {
             this.setRatings("services", rate);
         }
     }
 
-    public void setQualityRate(int rate) {
+    public void setQualityRate(float rate) {
         synchronized (this.ratings) {
             this.setRatings("quality", rate);
         }
     }
 
-    private void setRatings(String name, int rate) {
-        this.ratings.put(name, (this.ratings.get(name) + rate) / 2);
+    private void setRatings(String name, float rate) {
+        float value = this.ratings.get(name);
+        this.ratings.put(name, (value + rate) / (value == 0 ? 1 : 2));
     }
 
     public String toString() {
-        return "Name: " + this.name + 
+        return  "Rank: " + this.rank +
+                "\nName: " + this.name + 
                 "\nCity: " + this.city + 
                 "\nDescription: " + this.description + 
                 "\nPhone: " + this.phone + 

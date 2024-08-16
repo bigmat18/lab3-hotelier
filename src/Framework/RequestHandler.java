@@ -20,34 +20,15 @@ public class RequestHandler implements Runnable {
 
             while (this.running) {
                 try {
-                    Request request = Message.getMessage(Request.class, this.read(input));
-                    Response response = Router.routing(request);
-
-                    this.write(output, response.getString());
+                    Request request = Message.read(Request.class, input);
+                    Message.write(Response.class, output, Router.routing(request));
                 } catch (Exception e) {
-                    Response response = new Response(Response.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
-
-                    this.write(output, response.getString());
-                    e.printStackTrace();
+                    Message.write(Response.class, output, new Response(Response.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage()));
                 }
             }
             this.connection.close();
         } catch (IOException e) {
             System.out.println("Connection closed with " + connection.getInetAddress());
         }
-    }
-
-    private String read(DataInputStream input) throws IOException {
-        int length = input.readInt();
-        byte[] stringBytes = new byte[length];
-        input.readFully(stringBytes);
-        return new String(stringBytes, StandardCharsets.UTF_8);
-    }
-
-    private void write(DataOutputStream output, String data) throws IOException {
-        byte[] bytesResponse = data.getBytes();
-        output.writeInt(bytesResponse.length);
-        output.write(bytesResponse);
-        output.flush();
     }
 }

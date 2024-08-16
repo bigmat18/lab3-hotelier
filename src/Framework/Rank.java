@@ -28,7 +28,7 @@ public class Rank implements Runnable {
                 while(true) {
                     Thread.sleep(this.timeout);
                     Database.sort(Hotel.class, this.comparator);
-                    System.out.println(Database.select(Hotel.class, entry -> true));
+                    // System.out.println(Database.select(Hotel.class, entry -> true));
                 }
             } catch (Exception e) {
                 e.printStackTrace();

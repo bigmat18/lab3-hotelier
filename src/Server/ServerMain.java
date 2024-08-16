@@ -43,6 +43,7 @@ public class ServerMain {
 
             Router.inizialize();
             Database.inizialize();
+            
             Router.addEndpoint("/login", new Login());
             Router.addEndpoint("/registration", new Registration());
             Router.addEndpoint("/logout", new Logout());

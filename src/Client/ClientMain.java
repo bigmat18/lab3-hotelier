@@ -62,7 +62,7 @@ public class ClientMain {
                     case "registration": {
                         registration(output);
 
-                        Response response = Message.getMessage(Response.class, read(input));
+                        Response response = Message.read(Response.class, input);
                         if (response.statusCode.equals(Response.StatusCode.CREATED)) {
                             isLogged = true;
                             username = response.getBody().getAsJsonObject().get("message").getAsString();
@@ -75,7 +75,7 @@ public class ClientMain {
                     case "login": {
                         login(output);
 
-                        Response response = Message.getMessage(Response.class, read(input));
+                        Response response = Message.read(Response.class, input);
                         if (response.statusCode.equals(Response.StatusCode.OK)) {
                             isLogged = true;
                             username = response.getBody().getAsJsonObject().get("message").getAsString();
@@ -89,7 +89,7 @@ public class ClientMain {
                     case "logout": {
                         logout(output);
 
-                        Response response = Message.getMessage(Response.class, read(input));
+                        Response response = Message.read(Response.class, input);
                         if (response.statusCode.equals(Response.StatusCode.OK))
                             isLogged = false;
 
@@ -100,7 +100,7 @@ public class ClientMain {
                     case "searchHotel": {
                         searchHotels(output);
 
-                        Response response = Message.getMessage(Response.class, read(input));
+                        Response response = Message.read(Response.class, input);
                         if (response.statusCode != Response.StatusCode.OK)
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
 
@@ -115,7 +115,7 @@ public class ClientMain {
                     case "searchAllHotel": {
                         searchAllHotels(output);
 
-                        Response response = Message.getMessage(Response.class, read(input));
+                        Response response = Message.read(Response.class, input);
                         if (response.statusCode != Response.StatusCode.OK)
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
 
@@ -131,7 +131,7 @@ public class ClientMain {
                         else {
                             insertReview(output);
 
-                            Response response = Message.getMessage(Response.class, read(input));
+                            Response response = Message.read(Response.class, input);
                             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         }
 
@@ -166,8 +166,7 @@ public class ClientMain {
         obj.addProperty("password", password);
         obj.addProperty("username", username);
 
-        Request request = new Request("/login", Request.Methods.POST, obj);
-        write(output, request.getString());
+        Message.write(Request.class, output, new Request("/login", Request.Methods.POST, obj));
     }
 
     public static void registration(DataOutputStream output) throws IOException {
@@ -178,13 +177,11 @@ public class ClientMain {
         obj.addProperty("password", password);
         obj.addProperty("username", username);
 
-        Request request = new Request("/registration", Request.Methods.POST, obj);
-        write(output, request.getString());
+        Message.write(Request.class, output, new Request("/registration", Request.Methods.POST, obj));
     }
 
     public static void logout(DataOutputStream output) throws IOException {
-        Request request = new Request("/logout", Request.Methods.POST);
-        write(output, request.getString());
+        Message.write(Request.class, output, new Request("/logout", Request.Methods.POST));
     }
 
     public static void searchHotels(DataOutputStream output) throws IOException {
@@ -195,8 +192,7 @@ public class ClientMain {
         obj.addProperty("name", name);
         obj.addProperty("city", city);
 
-        Request request = new Request("/hotels", Request.Methods.GET, obj);
-        write(output, request.getString());
+        Message.write(Request.class, output, new Request("/hotels", Request.Methods.GET, obj));
     }
 
     public static void searchAllHotels(DataOutputStream output) throws IOException {
@@ -206,8 +202,7 @@ public class ClientMain {
         obj.addProperty("city", city);
         obj.addProperty("ordering", true);
 
-        Request request = new Request("/hotels", Request.Methods.GET, obj);
-        write(output, request.getString());
+        Message.write(Request.class, output, new Request("/hotels", Request.Methods.GET, obj));
     }
 
     public static void insertReview(DataOutputStream output) throws IOException {
@@ -231,21 +226,6 @@ public class ClientMain {
         obj.addProperty("servicesRate", servicesRate);
         obj.addProperty("priceRate", priceRate);
 
-        Request request = new Request("/reviews", Request.Methods.POST, obj);
-        write(output, request.getString());
-    }
-
-    private static String read(DataInputStream input) throws IOException {
-        int length = input.readInt();
-        byte[] stringBytes = new byte[length];
-        input.readFully(stringBytes);
-        return new String(stringBytes, StandardCharsets.UTF_8);
-    }
-
-    private static void write(DataOutputStream output, String data) throws IOException {
-        byte[] bytesResponse = data.getBytes();
-        output.writeInt(bytesResponse.length);
-        output.write(bytesResponse);
-        output.flush();
+        Message.write(Request.class, output, new Request("/reviews", Request.Methods.POST, obj));
     }
 }

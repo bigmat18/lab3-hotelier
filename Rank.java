@@ -1,5 +1,8 @@
-package Framework;
+package Server;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -11,6 +14,7 @@ import Data.Review;
 public class Rank implements Runnable {
     private boolean running = true;
     private final int timeout = 5000;
+    private final int PORT = 13;
 
     private final Comparator<Hotel> comparator = new Comparator<Hotel>() {
         @Override
@@ -23,16 +27,25 @@ public class Rank implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                while(true) {
-                    Thread.sleep(this.timeout);
-                    Database.sort(Hotel.class, this.comparator);
+        try(DatagramSocket socket = new DatagramSocket(PORT)) {
+            while (true) {
+                try {
+                    DatagramPacket request = new DatagramPacket(new byte[1024], 1024);
+                    socket.receive(request);
+
+                    String daytime = new Date().toString();
+                    byte[] data = daytime.getBytes("US-ASCII");
+                    DatagramPacket response = new DatagramPacket(data, data.length, request.getAddress(), request.getPort());
+                    socket.send(response);
+                    // Thread.sleep(this.timeout);
+                    // Database.sort(Hotel.class, this.comparator);
                     // System.out.println(Database.select(Hotel.class, entry -> true));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch(IOException ex) { 
+            ex.printStackTrace();
         }
     }
 

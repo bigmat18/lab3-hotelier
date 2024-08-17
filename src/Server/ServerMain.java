@@ -9,55 +9,45 @@ import java.util.concurrent.Executors;
 
 import com.google.gson.Gson;
 
-import Framework.Database;
-import Framework.Rank;
-import Framework.RequestHandler;
-import Framework.Router;
+import Data.Hotel;
+import Data.Review;
+import Data.User;
+import Framework.Server.Server;
+import Framework.Server.Router;
+import Framework.Server.Endpoint;
+import Framework.Database.Database;
 
 public class ServerMain {
-    private static boolean running = true;
-
-    private static final int THREAD_POOL_NUM = 10;
-    private static final int PORT = 8080;
 
     public static void main(String[] args) throws Exception {
+        Database.addTable(User.class);
+        Database.addTable(Hotel.class);
+        Database.addTable(Review.class);
+        Database.inizialize();
 
+        
+        Router.addEndpoint("/login", new Login());
+        Router.addEndpoint("/registration", new Registration());
+        Router.addEndpoint("/logout", new Logout());
+        Router.addEndpoint("/hotels", new Hotels());
+        Router.addEndpoint("/reviews", new Reviews());
+        Router.addEndpoint("/badge", new Badge());
+        Router.inizialize();
+        
         Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
             public void run() {
-                System.out.println("Shutdown...");
-                try { 
-                    Database.shutdown(); 
-                } catch(Exception e) { 
-                    e.printStackTrace(); 
+                System.out.println("Shutdown server");
+                try {
+                    Database.shutdown();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
-
-        try(ServerSocket server = new ServerSocket(PORT)) {
-            
-            System.out.println("Starting...");
-            ExecutorService pool = Executors.newFixedThreadPool(THREAD_POOL_NUM);
-
-            Router.inizialize();
-            Database.inizialize();
-            
-            Router.addEndpoint("/login", new Login());
-            Router.addEndpoint("/registration", new Registration());
-            Router.addEndpoint("/logout", new Logout());
-            Router.addEndpoint("/hotels", new Hotels());
-            Router.addEndpoint("/reviews", new Reviews());
-            Router.addEndpoint("/badge", new Badge());
-
-            Thread thread = new Thread(new Rank());
-            thread.start();
-            
-            while (running){
-                Socket connection = server.accept();
-                System.out.println("Connection opened with: " + connection.getInetAddress());
-                pool.execute(new RequestHandler(connection));
-            }
-        } catch(Exception e) {
+        
+        try (Server server = new Server(8080, 10)) {
+            server.run();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

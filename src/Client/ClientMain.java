@@ -11,9 +11,9 @@ import com.google.gson.JsonObject;
 
 import Data.Hotel;
 import Data.User;
-import Framework.Message;
-import Framework.Request;
-import Framework.Response;
+import Framework.Server.Message;
+import Framework.Server.Request;
+import Framework.Server.Response;
 
 import java.net.Socket;
 
@@ -69,8 +69,9 @@ public class ClientMain {
                             username = response.getBody().getAsJsonObject().get("message").getAsString();
                             System.out.println("Loegged successfull with "
                                     + response.getBody().getAsJsonObject().get("message").getAsString());
+                        } else {
+                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         }
-                        System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
                         break;
                     }
                     case "login": {

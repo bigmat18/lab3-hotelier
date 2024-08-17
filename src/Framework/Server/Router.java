@@ -1,4 +1,4 @@
-package Framework;
+package Framework.Server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,13 +8,26 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 public class Router {
-    private static HashMap<String, Endpoint> endpoints;
-    
-    public static void inizialize() { endpoints = new HashMap<String, Endpoint>(); }
+    private static HashMap<String, Endpoint> endpoints = new HashMap<String, Endpoint>();;
+    private static boolean isInit = false;
 
-    public static void addEndpoint(String url, Endpoint ep) { endpoints.put(url, ep); }
+    public static void inizialize() { 
+        isInit = true;
+    }
 
-    public static Response routing(Request request) throws IOException{
+    public static void addEndpoint(String url, Endpoint ep) throws RouterInizializeException{ 
+        if(isInit)
+            throw new RouterInizializeException("After endpoint inizialization you shoudn't add endpoint");
+            
+        endpoints.put(url, ep); 
+    }
+
+    public static Response routing(Request request) 
+        throws IOException, RouterInizializeException 
+    {
+        if(!isInit)
+            throw new RouterInizializeException("Router must be inizialized");
+
         Endpoint ep = endpoints.get(request.url);
         if(ep != null) {
             switch (request.method) {

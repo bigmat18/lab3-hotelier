@@ -7,10 +7,11 @@ import com.google.gson.JsonObject;
 import Data.Hotel;
 import Data.Review;
 import Data.User;
-import Framework.Database;
-import Framework.Endpoint;
-import Framework.Request;
-import Framework.Response;
+
+import Framework.Database.Database;
+import Framework.Server.Endpoint;;
+import Framework.Server.Request;
+import Framework.Server.Response;
 
 public class Reviews extends Endpoint {
 
@@ -19,20 +20,20 @@ public class Reviews extends Endpoint {
 
         if(!dataAreValid(data))
             return new Response(Response.StatusCode.BAD_REQUEST, "Value in rates must be between 0 and 5");
-
-        String username = data.get("username").getAsString();
-        ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername().equals(username));
-        if (users.isEmpty())
-            return new Response(Response.StatusCode.BAD_REQUEST, "User doesn't exits");
-
-        String hotelName = data.get("hotelName").getAsString();
-        String hotelCity = data.get("hotelCity").getAsString();
-
-        ArrayList<Hotel> hotels = Database.select(Hotel.class, entry-> entry.getCity().equals(hotelCity) && entry.getName().equals(hotelName));
-        if(hotels.isEmpty())
-            return new Response(Response.StatusCode.BAD_REQUEST, "Hotel doesn't exits");
-
+            
         try {
+            String username = data.get("username").getAsString();
+            ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername().equals(username));
+            if (users.isEmpty())
+                return new Response(Response.StatusCode.BAD_REQUEST, "User doesn't exits");
+
+            String hotelName = data.get("hotelName").getAsString();
+            String hotelCity = data.get("hotelCity").getAsString();
+
+            ArrayList<Hotel> hotels = Database.select(Hotel.class, entry-> entry.getCity().equals(hotelCity) && entry.getName().equals(hotelName));
+            if(hotels.isEmpty())
+                return new Response(Response.StatusCode.BAD_REQUEST, "Hotel doesn't exits");
+
             Database.insert(Review.class, data.get("rate").getAsInt(),
                                                     data.get("positionRate").getAsInt(),
                                                     data.get("cleaningRate").getAsInt(),
@@ -52,7 +53,7 @@ public class Reviews extends Endpoint {
             return new Response(Response.StatusCode.CREATED, "Review added");
         } catch(Exception e) {
             e.printStackTrace();
-            return new Response(Response.StatusCode.BAD_REQUEST, e.getMessage());
+            return new Response(Response.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
     }

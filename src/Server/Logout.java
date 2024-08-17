@@ -1,8 +1,9 @@
 package Server;
 
-import Framework.Endpoint;
-import Framework.Request;
-import Framework.Response;
+import Framework.Database.Database;
+import Framework.Server.Endpoint;;
+import Framework.Server.Request;
+import Framework.Server.Response;
 
 public class Logout extends Endpoint {
 

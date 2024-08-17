@@ -8,10 +8,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import Data.Hotel;
-import Framework.Database;
-import Framework.Endpoint;
-import Framework.Request;
-import Framework.Response;
+import Framework.Database.Database;
+import Framework.Server.Endpoint;;
+import Framework.Server.Request;
+import Framework.Server.Response;
 
 public class Hotels extends Endpoint {
     public Response GET(Request request) {
@@ -20,11 +20,17 @@ public class Hotels extends Endpoint {
         JsonElement city = data.get("city");
         JsonElement ordering = data.get("ordering");
 
-        ArrayList<Hotel> hotels = Database.select(Hotel.class, 
-                                                  entry -> (name == null || entry.getName().equals(name.getAsString())) &&
-                                                           (city == null || entry.getCity().equals(city.getAsString())));
-        if(ordering != null && ordering.getAsBoolean())
-            hotels.sort(Comparator.comparing(Hotel::getRate).reversed());
-        return new Response(Response.StatusCode.OK, hotels);
+        try {
+            ArrayList<Hotel> hotels = Database.select(Hotel.class,
+                    entry -> (name == null || entry.getName().equals(name.getAsString())) &&
+                            (city == null || entry.getCity().equals(city.getAsString())));
+                            
+            if (ordering != null && ordering.getAsBoolean())
+                hotels.sort(Comparator.comparing(Hotel::getRate).reversed());
+            return new Response(Response.StatusCode.OK, hotels);
+        } catch (Exception e) {
+            return new Response(Response.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
     }
 }

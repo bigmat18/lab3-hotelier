@@ -1,4 +1,4 @@
-package Framework;
+package Framework.Database;
 
 import java.io.File;
 import java.io.IOException;

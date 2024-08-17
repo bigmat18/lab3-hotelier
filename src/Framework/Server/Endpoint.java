@@ -1,4 +1,4 @@
-package Framework;
+package Framework.Server;
 
 import Data.User;
 

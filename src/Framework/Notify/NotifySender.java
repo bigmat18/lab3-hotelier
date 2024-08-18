@@ -13,11 +13,11 @@ public class NotifySender implements AutoCloseable {
     private final int MAX_PACKEGE_SIZE;
     private final MulticastSocket multicastSocket;
 
-    public NotifySender(int port, int maxPackegeSize, InetAddress address) throws IOException, SecurityException {
+    public NotifySender(int port, InetAddress address) throws IOException, SecurityException {
         this.PORT = port;
-        this.MAX_PACKEGE_SIZE = maxPackegeSize;
         this.ADDRESS = address;
         this.multicastSocket = new MulticastSocket();
+        this.MAX_PACKEGE_SIZE = this.multicastSocket.getSendBufferSize();
     }
 
     public void sendNotify(String message) throws DataTooLongException, IOException {
@@ -29,7 +29,6 @@ public class NotifySender implements AutoCloseable {
         buffer.putInt(msg.length);
         buffer.put(msg);
         buffer.flip();
-
         DatagramPacket packet = new DatagramPacket(buffer.array(), buffer.capacity(), ADDRESS, PORT);
         this.multicastSocket.send(packet);
     }

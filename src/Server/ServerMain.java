@@ -1,9 +1,12 @@
 package Server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.http.WebSocket.Listener;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,6 +19,7 @@ import Framework.Server.Server;
 import Framework.Server.Router;
 import Framework.Server.Endpoint;
 import Framework.Database.Database;
+import Framework.Notify.NotifySender;
 
 public class ServerMain {
 
@@ -44,11 +48,23 @@ public class ServerMain {
                 }
             }
         });
-        
-        Thread rankCalculator = new Thread(new Rank());
-        rankCalculator.start();
 
-        try (Server server = new Server(8080, 10)) {
+        try (Server server = new Server(8080, 10);
+             NotifySender sender = new NotifySender(8888, InetAddress.getByName("239.0.0.1"))) {
+
+            RankingCalculator rank = new RankingCalculator(sender);
+            Timer rankingTimer = new Timer();
+            rankingTimer.schedule(new TimerTask() {
+                @Override 
+                public void run() {
+                    try {
+                        rank.calculateAndUpdate();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 0, 5000);
+
             server.run();
         } catch (Exception e) {
             e.printStackTrace();

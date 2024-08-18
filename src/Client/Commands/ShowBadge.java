@@ -1,4 +1,4 @@
-package Client.Commands;
+package Client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

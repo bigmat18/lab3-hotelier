@@ -19,6 +19,7 @@ public class NotifyReciever implements AutoCloseable {
         this.PORT = port;
         this.socket = new MulticastSocket(this.PORT);
         this.socket.setSoTimeout(timeout);
+        
         this.buffer = new byte[this.socket.getReceiveBufferSize()];
         this.socket.joinGroup(address);
     }
@@ -36,6 +37,14 @@ public class NotifyReciever implements AutoCloseable {
         byte[] data = new byte[size];
         System.arraycopy(packet.getData(), 4, data, 0, size);
         return data;
+    }
+
+    public void joinGroup() throws IOException {
+        this.socket.joinGroup(this.ADDRESS);
+    }
+
+    public void leaveGroup() throws IOException {
+        this.socket.leaveGroup(this.ADDRESS);
     }
 
     public void close() {

@@ -32,7 +32,7 @@ public class Registration extends Endpoint {
                             data.get("password").getAsString(), 
                             data.get("username").getAsString());
                             
-            return new Response(Response.StatusCode.CREATED, data.get("username").getAsString());
+            return new Response(Response.StatusCode.CREATED, "Registration sucessfull with " + data.get("username").getAsString());
         } catch(Exception e) {
             return new Response(Response.StatusCode.INTERNAL_SERVER_ERROR,  e.getMessage());
         }

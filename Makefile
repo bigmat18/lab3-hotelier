@@ -13,7 +13,7 @@ server:
 	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Server/*.java $(FW_DB) $(FW_SERVER) $(FW_NOTIFY) $(SRC_DIR)/Data/*.java -d $(BIN_DIR)
 
 client: 
-	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Client/*.java $(FW_DB) $(FW_SERVER) $(FW_NOTIFY) $(SRC_DIR)/Data/*.java  -d $(BIN_DIR)
+	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Client/*.java $(SRC_DIR)/Client/Commands/*.java $(FW_DB) $(FW_SERVER) $(FW_NOTIFY) $(SRC_DIR)/Data/*.java  -d $(BIN_DIR)
 
 clean: 
 	rm -rf $(BIN_DIR)/Client/* $(BIN_DIR)/Server/* $(BIN_DIR)/Framework/* $(BIN_DIR)/Data/*

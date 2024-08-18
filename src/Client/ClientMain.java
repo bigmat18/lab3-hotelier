@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import Client.Commands.ShowBadge;
 import Data.Hotel;
 import Data.User;
 import Framework.Server.Message;
@@ -30,8 +31,6 @@ public class ClientMain {
             DataOutputStream output = new DataOutputStream(socket.getOutputStream());
             DataInputStream input = new DataInputStream(socket.getInputStream())) {
 
-            System.out.println("Client connected to: " + HOST + ":" + PORT);
-
             System.out.print("\n" + //
                     "  _    _       _       _ _           \n" + //
                     " | |  | |     | |     | (_)          \n" + //
@@ -42,211 +41,24 @@ public class ClientMain {
                     "                                     \n" + //
                     "                                     \n" + //
                     "");
-            System.out.println("Digit one of following command or 'quit' to exit.\n\n" +
-                               "   login\t\tLogin in the application\n" +
-                               "   registraion\t\tRegistration with new account\n" +
-                               "   logout\t\tLogout from application\n" +
-                               "   searchHotel\t\tView hotel for name and city\n" +
-                               "   searchAllHotel\tView all hotel in a city\n" +
-                               "   insertReview\t\tAdd a review for a hotel\n" +
-                               "   help\t\t\tView list of commands\n" + 
-                               "   showBadge\t\tShow higher badge of user");
 
-            while (running) {
-                String choose = Keyboard.StringReader(">");
-                switch (choose) {
-                    case "quit": {
-                        running = false;
-                        System.out.println("Quitting...");
-                        break;
-                    }
-                    case "registration": {
-                        registration(output);
+            AppStatus status = new AppStatus();
+            CommandHandler cmdHandler = new CommandHandler(status);
+            cmdHandler.addCommand(new Login());
+            cmdHandler.addCommand(new Registration());
+            cmdHandler.addCommand(new Logout());
+            cmdHandler.addCommand(new SearchHotel());
+            cmdHandler.addCommand(new SearchAllHotels());
+            cmdHandler.addCommand(new ShowBadge());
 
-                        Response response = Message.read(Response.class, input);
-                        if (response.statusCode.equals(Response.StatusCode.CREATED)) {
-                            isLogged = true;
-                            username = response.getBody().getAsJsonObject().get("message").getAsString();
-                            System.out.println("Loegged successfull with "
-                                    + response.getBody().getAsJsonObject().get("message").getAsString());
-                        } else {
-                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
-                        }
-                        break;
-                    }
-                    case "login": {
-                        login(output);
+            System.out.println(cmdHandler.getCommandsList());
 
-                        Response response = Message.read(Response.class, input);
-                        if (response.statusCode.equals(Response.StatusCode.OK)) {
-                            isLogged = true;
-                            username = response.getBody().getAsJsonObject().get("message").getAsString();
-                            System.out.println("Logged successfull with "
-                                    + response.getBody().getAsJsonObject().get("message").getAsString());
-                        } else {
-                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
-                        }
-                        break;
-                    }
-                    case "logout": {
-                        logout(output);
-
-                        Response response = Message.read(Response.class, input);
-                        if (response.statusCode.equals(Response.StatusCode.OK))
-                            isLogged = false;
-
-                        System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
-
-                        break;
-                    }
-                    case "searchHotel": {
-                        searchHotels(output);
-
-                        Response response = Message.read(Response.class, input);
-                        if (response.statusCode != Response.StatusCode.OK)
-                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
-
-                        for (JsonElement element : response.getBody().getAsJsonArray()) {
-                            Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());
-                            System.out.println("---------------------------------------------");
-                            System.out.println(hotel.toString());
-                        }
-
-                        break;
-                    }
-                    case "searchAllHotel": {
-                        searchAllHotels(output);
-
-                        Response response = Message.read(Response.class, input);
-                        if (response.statusCode != Response.StatusCode.OK)
-                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
-
-                        for (JsonElement element : response.getBody().getAsJsonArray()) {
-                            Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());
-                            System.out.println("---------------------------------------------");
-                            System.out.println(hotel.toString());
-                        }
-                    }
-                    case "insertReview": {
-                        if (!isLogged)
-                            System.out.println("You must be logged");
-                        else {
-                            insertReview(output);
-
-                            Response response = Message.read(Response.class, input);
-                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
-                        }
-
-                        break;
-                    }
-                    case "showBadge": {
-                        if (!isLogged)
-                            System.out.println("You must be logged");
-                        else {
-                            showBadge(output);
-
-                            Response response = Message.read(Response.class, input);
-                            System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
-                        }
-                        
-                        break;
-                    }
-                    case "help": {
-                        System.out.println("\nDigit one of following command or 'quit' to exit.\n\n" +
-                                "   login\t\tLogin in the application\n" +
-                                "   registraion\t\tRegistration with new account\n" +
-                                "   logout\t\tLogout from application\n" +
-                                "   searchHotel\t\tView hotel for name and city\n" +
-                                "   searchAllHotel\tView all hotel in a city\n" +
-                                "   insertReview\t\tAdd a review for a hotel\n" +
-                                "   help\t\t\tView list of commands\n" +
-                                "   showBadge\t\tShow higher badge of user");
-                        break;
-                    }
-                    default: {
-                        System.out.println("Invalid option");
-                    }
-                }
+            while(status.isRunning()) {
+                cmdHandler.execute(input, output);
             }
+  
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void login(DataOutputStream output) throws IOException {
-        JsonObject obj = new JsonObject();
-        String username = Keyboard.StringReader("username: ");
-        String password = Keyboard.StringReader("password: ");
-
-        obj.addProperty("password", password);
-        obj.addProperty("username", username);
-
-        Message.write(Request.class, output, new Request("/login", Request.Methods.POST, obj));
-    }
-
-    public static void registration(DataOutputStream output) throws IOException {
-        JsonObject obj = new JsonObject();
-        String username = Keyboard.StringReader("username: ");
-        String password = Keyboard.StringReader("password: ");
-
-        obj.addProperty("password", password);
-        obj.addProperty("username", username);
-
-        Message.write(Request.class, output, new Request("/registration", Request.Methods.POST, obj));
-    }
-
-    public static void logout(DataOutputStream output) throws IOException {
-        Message.write(Request.class, output, new Request("/logout", Request.Methods.POST));
-    }
-
-    public static void searchHotels(DataOutputStream output) throws IOException {
-        String name = Keyboard.StringReader("name: ");
-        String city = Keyboard.StringReader("city: ");
-
-        JsonObject obj = new JsonObject();
-        obj.addProperty("name", name);
-        obj.addProperty("city", city);
-
-        Message.write(Request.class, output, new Request("/hotels", Request.Methods.GET, obj));
-    }
-
-    public static void searchAllHotels(DataOutputStream output) throws IOException {
-        String city = Keyboard.StringReader("city: ");
-
-        JsonObject obj = new JsonObject();
-        obj.addProperty("city", city);
-        obj.addProperty("ordering", true);
-
-        Message.write(Request.class, output, new Request("/hotels", Request.Methods.GET, obj));
-    }
-
-    public static void insertReview(DataOutputStream output) throws IOException {
-        String hotelCity = Keyboard.StringReader("city: ");
-        String hotelName = Keyboard.StringReader("naame: ");
-
-        int rate = Keyboard.IntReader("Rate: ");
-        int positionRate = Keyboard.IntReader("position rate: ");
-        int cleaningRate = Keyboard.IntReader("cleaning rate: ");
-        int servicesRate = Keyboard.IntReader("service rate: ");
-        int priceRate = Keyboard.IntReader("price rate: ");
-
-        JsonObject obj = new JsonObject();
-        obj.addProperty("hotelCity", hotelCity);
-        obj.addProperty("hotelName", hotelName);
-        obj.addProperty("username", username);
-
-        obj.addProperty("rate", rate);
-        obj.addProperty("positionRate", positionRate);
-        obj.addProperty("cleaningRate", cleaningRate);
-        obj.addProperty("servicesRate", servicesRate);
-        obj.addProperty("priceRate", priceRate);
-
-        Message.write(Request.class, output, new Request("/reviews", Request.Methods.POST, obj));
-    }
-
-    public static void showBadge(DataOutputStream output) throws IOException {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("username", username);
-        Message.write(Request.class, output, new Request("/badge", Request.Methods.GET, obj));
     }
 }

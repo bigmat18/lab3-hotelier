@@ -3,6 +3,7 @@ package Server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -10,6 +11,9 @@ import javax.xml.crypto.Data;
 
 import Data.Hotel;
 import Data.Review;
+import Framework.Database.Database;
+import Framework.Database.DatabaseInizializeException;
+import Framework.Notify.NotifySender;
 
 public class Rank implements Runnable {
     private boolean running = true;
@@ -27,29 +31,21 @@ public class Rank implements Runnable {
 
     @Override
     public void run() {
-        try(DatagramSocket socket = new DatagramSocket(PORT)) {
-            while (true) {
-                try {
-                    DatagramPacket request = new DatagramPacket(new byte[1024], 1024);
-                    socket.receive(request);
 
-                    String daytime = new Date().toString();
-                    byte[] data = daytime.getBytes("US-ASCII");
-                    DatagramPacket response = new DatagramPacket(data, data.length, request.getAddress(), request.getPort());
-                    socket.send(response);
-                    // Thread.sleep(this.timeout);
-                    // Database.sort(Hotel.class, this.comparator);
-                    // System.out.println(Database.select(Hotel.class, entry -> true));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        while (!Thread.interrupted()) {
+            try(NotifySender notify = new NotifySender(4321, 1024, InetAddress.getByName("226.226.226.226"))) {
+                Thread.sleep(this.timeout);
+                this.updateRanking();
+                Database.sort(Hotel.class, this.comparator);
+                notify.sendNotify("Ciao");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch(IOException ex) { 
-            ex.printStackTrace();
+            
         }
     }
 
-    private void updateRanking() {
+    private void updateRanking() throws DatabaseInizializeException{
         ArrayList<Hotel> hotels = Database.select(Hotel.class, entity -> true);
         ArrayList<Integer> reviewNumber = new ArrayList<>(hotels.size());
         ArrayList<Float> avgRate = new ArrayList<>(hotels.size());

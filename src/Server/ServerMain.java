@@ -45,6 +45,9 @@ public class ServerMain {
             }
         });
         
+        Thread rankCalculator = new Thread(new Rank());
+        rankCalculator.start();
+
         try (Server server = new Server(8080, 10)) {
             server.run();
         } catch (Exception e) {

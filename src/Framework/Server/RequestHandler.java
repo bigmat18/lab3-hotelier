@@ -9,16 +9,17 @@ import java.nio.charset.StandardCharsets;
 
 public class RequestHandler implements Runnable {
     private Socket connection;
-    private boolean running = true;
 
-    public RequestHandler(Socket connection) { this.connection = connection; }
+    public RequestHandler(Socket connection) { 
+        this.connection = connection; 
+    }
 
     @Override
     public void run() {
         try (DataOutputStream output = new DataOutputStream(connection.getOutputStream());
              DataInputStream input = new DataInputStream(connection.getInputStream())) {
 
-            while (this.running) {
+            while (!Thread.interrupted()) {
                 try {
                     Request request = Message.read(Request.class, input);
                     Message.write(Response.class, output, Router.routing(request));

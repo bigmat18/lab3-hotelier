@@ -20,6 +20,7 @@ public class NotifyReciever implements AutoCloseable {
         this.socket = new MulticastSocket(this.PORT);
         this.socket.setSoTimeout(timeout);
         this.buffer = new byte[this.socket.getReceiveBufferSize()];
+        this.socket.joinGroup(address);
     }
 
     public byte[] receiveNotify() throws DataTooLongException, IOException {

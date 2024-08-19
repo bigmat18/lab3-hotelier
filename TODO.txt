@@ -1,9 +1,0 @@
-ENDPOINTS
-- login(username, password) [no auth]
-- registration(username, password) [no auth]
-- logout() [auth]
-
-- searchHotel(name, city) [no auth]
-- searchAllHotels(city) [no auth]
-- insertReview(nome, city, globalScore, singleScore[]) [auth]
-- showBadges() [auth]

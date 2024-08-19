@@ -13,6 +13,7 @@ import Data.Hotel;
 import Data.Review;
 import Framework.Database.Database;
 import Framework.Database.DatabaseInizializeException;
+import Framework.Database.TableNoExistsException;
 import Framework.Notify.DataTooLongException;
 import Framework.Notify.NotifySender;
 
@@ -21,13 +22,13 @@ public class RankingCalculator {
     private final Comparator<Hotel> comparator;
     private Map<String, Hotel> topLocalRank;
 
-    public RankingCalculator(NotifySender sender) throws DatabaseInizializeException { 
+    public RankingCalculator(NotifySender sender) throws DatabaseInizializeException, TableNoExistsException { 
         this.sender = sender;
         this.topLocalRank = new HashMap<>();
         this.comparator = new Comparator<Hotel>() {
             public int compare(Hotel lhs, Hotel rhs) {
-                if (lhs.rank < rhs.rank)        return -1;
-                else if (lhs.rank > rhs.rank)   return 1;
+                if (lhs.rank < rhs.rank)        return 1;
+                else if (lhs.rank > rhs.rank)   return -1;
                 else                            return 0;
             }
         };
@@ -35,24 +36,27 @@ public class RankingCalculator {
         ArrayList<Hotel> hotels = Database.select(Hotel.class, entry -> true);
         for(Hotel hotel : hotels)
             topLocalRank.putIfAbsent(hotel.getCity(), hotel);
+        System.out.println(this.topLocalRank.toString());
     }
 
     public void calculateAndUpdate() 
-        throws DatabaseInizializeException, DataTooLongException, IOException 
+        throws DatabaseInizializeException, DataTooLongException, IOException, TableNoExistsException
     {
         this.updateRanking();
         Database.sort(Hotel.class, this.comparator);
         ArrayList<Hotel> hotels = Database.select(Hotel.class, entry -> true);
+
         for(Hotel hotel : hotels) {
-            if(!this.topLocalRank.get(hotel.getCity()).getName().equals(hotel.getName()) && this.topLocalRank
-                    .get(hotel.getCity()).rank < hotel.rank) {
-                this.sender.sendNotify("In city " + hotel.getCity() + " the new top hotel is " + hotel.getName());
+            if(!this.topLocalRank.get(hotel.getCity()).getName().equals(hotel.getName()) && 
+                this.topLocalRank.get(hotel.getCity()).rank < hotel.rank) 
+            {
                 this.topLocalRank.put(hotel.getCity(), hotel);
+                this.sender.sendNotify("In city " + hotel.getCity() + " the new top hotel is " + hotel.getName());
             }
         }
     }
 
-    private void updateRanking() throws DatabaseInizializeException {
+    private void updateRanking() throws DatabaseInizializeException, TableNoExistsException {
         ArrayList<Hotel> hotels = Database.select(Hotel.class, entity -> true);
         ArrayList<Integer> reviewNumber = new ArrayList<>(hotels.size());
         ArrayList<Float> avgRate = new ArrayList<>(hotels.size());
@@ -62,9 +66,8 @@ public class RankingCalculator {
 
         for (int i = 0; i < hotels.size(); i++) {
             Hotel hotel = hotels.get(i);
-            ArrayList<Review> reviews = Database.select(Review.class,
-                    entity -> entity.getHotelCity() == hotel.getCity() &&
-                              entity.getHotelName() == hotel.getName());
+            ArrayList<Review> reviews = Database.select(Review.class,  entity -> entity.getHotelCity().equals(hotel.getCity()) &&
+                                                                                           entity.getHotelName().equals(hotel.getName()));
 
             float value = 0; // R
             for (Review review : reviews)
@@ -86,9 +89,12 @@ public class RankingCalculator {
         globalAvgRate /= hotels.size();
         avgReviewNumber /= hotels.size();
 
-        for (int i = 0; i < hotels.size(); i++)
-            hotels.get(i).rank = ((avgReviewNumber * globalAvgRate)
-                                + (avgRate.get(i) * reviewNumber.get(i)))
-                                / (avgReviewNumber + reviewNumber.get(i));
+        for (int i = 0; i < hotels.size(); i++) {
+            if(avgReviewNumber + reviewNumber.get(i) == 0)
+                continue;
+
+            hotels.get(i).rank = ((avgReviewNumber * globalAvgRate) + (avgRate.get(i) * reviewNumber.get(i)))
+                                  / (avgReviewNumber + reviewNumber.get(i));
+        }
     }
 }

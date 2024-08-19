@@ -54,49 +54,51 @@ public class Database {
         tables.put(tableName.getSimpleName(), table);
     }
     
-    public static <T> boolean delete(Class<T> tableName, Predicate<T> predicate) throws DatabaseInizializeException
+    public static <T> boolean delete(Class<T> tableName, Predicate<T> predicate)
+        throws DatabaseInizializeException, TableNoExistsException
     {
         Table<T> table = tables.get(tableName.getSimpleName());
         if(table == null)
-            return false;
+            throw new TableNoExistsException("Table " + tableName.getSimpleName() + "don't exits");
         return table.delete(predicate);
     }
     
-    public static <T> ArrayList<T> select(Class<T> tableName, Predicate<T> predicate) throws DatabaseInizializeException 
+    public static <T> ArrayList<T> select(Class<T> tableName, Predicate<T> predicate) 
+        throws DatabaseInizializeException, TableNoExistsException
     {
         if (!isInit)
             throw new DatabaseInizializeException("Databse must be inizialize before");
 
         Table<T> table = tables.get(tableName.getSimpleName());
         if (table == null)
-            return null;
+            throw new TableNoExistsException("Table " + tableName.getSimpleName() + "don't exits");
 
         return table.select(predicate);
     }
 
-    public static <T> T insert(Class<T> typeClass, Object... args) throws Exception
+    public static <T> T insert(Class<T> tableName, Object... args) throws Exception
     {
         if (!isInit)
             throw new DatabaseInizializeException("Databse must be inizialize before");
 
-        T instance = instanceTableElement(typeClass, args);
-        return insert(typeClass, instance);
+        T instance = instanceTableElement(tableName, args);
+        return insert(tableName, instance);
     }
     
-    public static <T> T insert(Class<T> typeClass, T instance) throws Exception 
+    public static <T> T insert(Class<T> tableName, T instance) throws Exception 
     {
         if (!isInit)
             throw new DatabaseInizializeException("Databse must be inizialize before");
 
 
-        Table<T> table = tables.get(typeClass.getSimpleName());
+        Table<T> table = tables.get(tableName.getSimpleName());
         if (table == null || !table.insert(instance))
-            return null;
+            throw new TableNoExistsException("Table " + tableName.getSimpleName() + "don't exits");
 
         return instance;
     }
     
-    private static <T> T instanceTableElement(Class<T> typeClass, Object... args) throws Exception {
+    private static <T> T instanceTableElement(Class<T> tableName, Object... args) throws Exception {
         Class<?>[] parameter = new Class[args.length];
     
         for (int i = 0; i < parameter.length; i++) {
@@ -105,21 +107,21 @@ public class Database {
             else
                 parameter[i] = args[i].getClass();
         }
-            
     
-        Constructor<T> constructor = typeClass.getConstructor(parameter);
+        Constructor<T> constructor = tableName.getConstructor(parameter);
         T instance = constructor.newInstance(args);
         return instance;
     }
 
-    public static <T> boolean sort(Class<T> typeClass, Comparator<T> compare) throws DatabaseInizializeException {
+    public static <T> boolean sort(Class<T> tableName, Comparator<T> compare) 
+        throws DatabaseInizializeException, TableNoExistsException 
+    {
         if (!isInit)
             throw new DatabaseInizializeException("Databse must be inizialize before");
 
-        Table<T> table = tables.get(typeClass.getSimpleName());
+        Table<T> table = tables.get(tableName.getSimpleName());
         if(table == null)
-            return false;
-        
+            throw new TableNoExistsException("Table " + tableName.getSimpleName() + "don't exits");        
         table.sort(compare);
         return true;
     }

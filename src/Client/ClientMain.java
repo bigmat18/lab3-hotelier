@@ -28,7 +28,7 @@ public class ClientMain {
 
     private static final String UDP_HOST = "239.0.0.1";
     private static final int UDP_PORT = 8888;
-    private static final int UDP_TIMEOUT = 1000;
+    private static final int UDP_TIMEOUT = 4000;
 
     public static void main(String[] args) {
 
@@ -54,6 +54,7 @@ public class ClientMain {
             cmdHandler.addCommand(new Logout());
             cmdHandler.addCommand(new SearchHotel());
             cmdHandler.addCommand(new SearchAllHotels());
+            cmdHandler.addCommand(new InsertReview());
             cmdHandler.addCommand(new ShowBadge());
 
             Thread notify = new Thread() {

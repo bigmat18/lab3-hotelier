@@ -36,6 +36,7 @@ public class NotifyReciever implements AutoCloseable {
 
         byte[] data = new byte[size];
         System.arraycopy(packet.getData(), 4, data, 0, size);
+
         return data;
     }
 

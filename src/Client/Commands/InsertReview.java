@@ -18,7 +18,7 @@ import Framework.Server.Response;
 public class InsertReview extends Command {
 
     public InsertReview() {
-        this.name = "insertBadge";
+        this.name = "insertReview";
         this.description = "\t\tAdd a review for a hotel";
     }
 

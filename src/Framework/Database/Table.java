@@ -72,8 +72,8 @@ public class Table<T> {
     public ArrayList<T> select(Predicate<T> predicate) {
         synchronized(this.elements) {
             return this.elements.stream()
-            .filter(predicate)
-            .collect(Collectors.toCollection(ArrayList::new));
+                                .filter(predicate)
+                                .collect(Collectors.toCollection(ArrayList::new));
         }
     }
     

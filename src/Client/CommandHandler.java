@@ -34,8 +34,10 @@ public class CommandHandler {
         }
 
         Command cmd = this.commands.get(choose);
-        if(cmd == null)
+        if(cmd == null) {
             System.out.println("Invalid option");
+            return;
+        }
         
         cmd.execution(input, output, this.status);
     }

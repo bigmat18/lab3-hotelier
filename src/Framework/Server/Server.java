@@ -1,36 +1,80 @@
 package Framework.Server;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import Data.Hotel;
 import Data.Review;
 import Data.User;
 import Framework.Database.Database;
+import Framework.Notify.NotifySender;
+
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Server implements AutoCloseable {
-    private final int PORT;
-    private final int THREAD_NUM;
+    public int PORT;
+    public int THREAD_NUM;
+    public String DATA_DIR;
+    public int NOTIFY_PORT;
+    public String NOTIFY_ADDRESS;
+    public int DATA_UPDATE;
+    public int NOTIFY_UPDATE;
 
     private ServerSocket server;
     private ExecutorService pool;
+    private NotifySender sender;
+    private File file;
+    private ArrayList<Timer> tasks;
 
-    public Server(int port, int threadNum)
-            throws IOException, SecurityException, IllegalArgumentException {
-        this.PORT = port;
-        this.THREAD_NUM = threadNum;
+    public Server()
+            throws IOException, SecurityException, IllegalArgumentException 
+    {
+        this("config.json");
+    }
+
+    public Server(String settingFileName)
+        throws IOException, SecurityException, IllegalArgumentException 
+    {
+        this.file = new File(settingFileName);
+        this.loadData();
+
         this.server = new ServerSocket(this.PORT);
-        this.pool = Executors.newFixedThreadPool(threadNum);
+        this.pool = Executors.newFixedThreadPool(this.THREAD_NUM);
+        this.sender = new NotifySender(this.NOTIFY_PORT, InetAddress.getByName(this.NOTIFY_ADDRESS));
+    }
+
+    private void loadData() throws IOException {
+        try (FileReader reader = new FileReader(this.file, StandardCharsets.UTF_8)) {
+            JsonObject obj = JsonParser.parseReader(reader).getAsJsonObject();
+            this.PORT = obj.get("server_port").getAsInt();
+            this.THREAD_NUM = obj.get("thread_num").getAsInt();
+            this.DATA_DIR = obj.get("data_dir").getAsString();
+            this.NOTIFY_ADDRESS = obj.get("notify_port").getAsString();
+            this.NOTIFY_PORT = obj.get("notify_port").getAsInt();
+            this.DATA_UPDATE = obj.get("data_update").getAsInt();
+            this.NOTIFY_UPDATE = obj.get("notify_update").getAsInt();
+        }
     }
 
     public void run()
-            throws IOException, SecurityException, RejectedExecutionException, NullPointerException {
-
+            throws IOException, SecurityException, RejectedExecutionException, NullPointerException 
+    {
         System.out.println("Running server in " + PORT);
         while (!Thread.interrupted()) {
             Socket connection = this.server.accept();
@@ -39,8 +83,10 @@ public class Server implements AutoCloseable {
         }
     }
 
+    public NotifySender getNotifySender() { return this.sender; }
+
     public void close() throws SecurityException, IOException {
-        System.out.println("ciao");
+        this.sender.close();
         this.server.close();
         this.pool.shutdown();
     

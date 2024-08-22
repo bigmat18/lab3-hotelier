@@ -37,33 +37,49 @@ public class ServerMain {
         Router.addEndpoint("/reviews", new Reviews());
         Router.addEndpoint("/badge", new Badge());
         Router.inizialize();
-        
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                System.out.println("Shutdown server");
-                try {
-                    Database.shutdown();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
-        try (Server server = new Server(8080, 10);
-             NotifySender sender = new NotifySender(8888, InetAddress.getByName("239.0.0.1"))) {
+        try (Server server = new Server()) {
 
-            RankingCalculator rank = new RankingCalculator(sender);
+            RankingCalculator rank = new RankingCalculator(server.getNotifySender());
             Timer rankingTimer = new Timer();
             rankingTimer.schedule(new TimerTask() {
-                @Override 
+                @Override
                 public void run() {
                     try {
+                        System.out.println("Ranking update");
                         rank.calculateAndUpdate();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            }, 0, 5000);
+            }, 0, server.DATA_UPDATE);
+            
+            Timer databaseTimer = new Timer();
+            databaseTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("Database update");
+                        Database.shutdown();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 0, server.NOTIFY_UPDATE);
+
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("Shutdown server");
+                        databaseTimer.cancel();
+                        rankingTimer.cancel();
+                        Database.shutdown();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             server.run();
         } catch (Exception e) {

@@ -30,7 +30,7 @@ public class Database {
     public static void shutdown() throws IOException, DatabaseInizializeException 
     {
         if(!isInit)
-            throw new DatabaseInizializeException("Databse must be inizialize before");
+            throw new DatabaseInizializeException("Database must be inizialize before");
 
         for (Map.Entry<String, Table> table : tables.entrySet()) {
             table.getValue().unloadData(gson);

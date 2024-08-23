@@ -24,21 +24,22 @@ import Framework.Notify.NotifySender;
 public class ServerMain {
 
     public static void main(String[] args) throws Exception {
-        Database.addTable(User.class);
-        Database.addTable(Hotel.class);
-        Database.addTable(Review.class);
-        Database.inizialize();
-
-        
-        Router.addEndpoint("/login", new Login());
-        Router.addEndpoint("/registration", new Registration());
-        Router.addEndpoint("/logout", new Logout());
-        Router.addEndpoint("/hotels", new Hotels());
-        Router.addEndpoint("/reviews", new Reviews());
-        Router.addEndpoint("/badge", new Badge());
-        Router.inizialize();
 
         try (Server server = new Server()) {
+
+            Database.setDataPath(server.DATA_DIR);
+            Database.addTable(User.class);
+            Database.addTable(Hotel.class);
+            Database.addTable(Review.class);
+            Database.inizialize();
+
+            Router.addEndpoint("/login", new Login());
+            Router.addEndpoint("/registration", new Registration());
+            Router.addEndpoint("/logout", new Logout());
+            Router.addEndpoint("/hotels", new Hotels());
+            Router.addEndpoint("/reviews", new Reviews());
+            Router.addEndpoint("/badge", new Badge());
+            Router.inizialize();
 
             RankingCalculator rank = new RankingCalculator(server.getNotifySender());
             Timer rankingTimer = new Timer();
@@ -46,33 +47,18 @@ public class ServerMain {
                 @Override
                 public void run() {
                     try {
-                        System.out.println("Ranking update");
                         rank.calculateAndUpdate();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            }, 0, server.DATA_UPDATE);
-            
-            Timer databaseTimer = new Timer();
-            databaseTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        System.out.println("Database update");
-                        Database.shutdown();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, 0, server.NOTIFY_UPDATE);
+            }, 0, server.NOTIFY_UPDATE_TIMEOUT);
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
                     try {
                         System.out.println("Shutdown server");
-                        databaseTimer.cancel();
                         rankingTimer.cancel();
                         Database.shutdown();
                     } catch (Exception e) {

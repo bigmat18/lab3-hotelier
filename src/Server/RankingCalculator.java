@@ -36,7 +36,6 @@ public class RankingCalculator {
         ArrayList<Hotel> hotels = Database.select(Hotel.class, entry -> true);
         for(Hotel hotel : hotels)
             topLocalRank.putIfAbsent(hotel.getCity(), hotel);
-        System.out.println(this.topLocalRank.toString());
     }
 
     public void calculateAndUpdate() 
@@ -86,8 +85,8 @@ public class RankingCalculator {
             avgReviewNumber += reviews.size();
         }
 
-        globalAvgRate /= hotels.size();
-        avgReviewNumber /= hotels.size();
+        globalAvgRate /= hotels.size() != 0 ? hotels.size() : 1;
+        avgReviewNumber /= hotels.size() != 0 ? hotels.size() : 1;
 
         for (int i = 0; i < hotels.size(); i++) {
             if(avgReviewNumber + reviewNumber.get(i) == 0)

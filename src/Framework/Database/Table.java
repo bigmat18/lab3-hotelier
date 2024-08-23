@@ -50,8 +50,8 @@ public class Table<T> {
     }
     
     public void unloadData(Gson gson) throws IOException{
-        try (FileWriter writer = new FileWriter(this.file)) {
-            synchronized (this.elements) {
+        synchronized (this.elements) {
+            try (FileWriter writer = new FileWriter(this.file)) {
                 gson.toJson(this.elements, writer);
             }
         }

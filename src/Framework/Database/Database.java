@@ -22,7 +22,8 @@ public class Database {
     private static Map<String, Table> tables = new HashMap<>();
     private static Gson gson = new Gson();
     private static boolean isInit = false;
-
+    private static String dataPath;
+    
     public static void inizialize() {
         isInit = true;
     }
@@ -37,6 +38,8 @@ public class Database {
         }
     }
 
+    public static void setDataPath(String path) { dataPath = path; }
+
     public static <T> void addTable(Class<T> table) throws IOException, DatabaseInizializeException 
     {
         if (isInit)
@@ -50,7 +53,7 @@ public class Database {
         if (isInit)
             throw new DatabaseInizializeException("You shoudn't add more table after inizialization");
 
-        Table<T> table = new Table<>(tableName, fileName, gson);
+        Table<T> table = new Table<>(tableName, dataPath + fileName, gson);
         tables.put(tableName.getSimpleName(), table);
     }
     

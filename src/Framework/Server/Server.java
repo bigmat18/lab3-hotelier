@@ -33,8 +33,8 @@ public class Server implements AutoCloseable {
     public String DATA_DIR;
     public int NOTIFY_PORT;
     public String NOTIFY_ADDRESS;
-    public int DATA_UPDATE;
-    public int NOTIFY_UPDATE;
+    public int DATA_SAVE_TIMEOUT;
+    public int NOTIFY_UPDATE_TIMEOUT;
 
     private ServerSocket server;
     private ExecutorService pool;
@@ -62,13 +62,14 @@ public class Server implements AutoCloseable {
     private void loadData() throws IOException {
         try (FileReader reader = new FileReader(this.file, StandardCharsets.UTF_8)) {
             JsonObject obj = JsonParser.parseReader(reader).getAsJsonObject();
+
             this.PORT = obj.get("server_port").getAsInt();
             this.THREAD_NUM = obj.get("thread_num").getAsInt();
             this.DATA_DIR = obj.get("data_dir").getAsString();
-            this.NOTIFY_ADDRESS = obj.get("notify_port").getAsString();
+            this.NOTIFY_ADDRESS = obj.get("notify_address").getAsString();
             this.NOTIFY_PORT = obj.get("notify_port").getAsInt();
-            this.DATA_UPDATE = obj.get("data_update").getAsInt();
-            this.NOTIFY_UPDATE = obj.get("notify_update").getAsInt();
+            this.DATA_SAVE_TIMEOUT = obj.get("data_save_timeout").getAsInt();
+            this.NOTIFY_UPDATE_TIMEOUT = obj.get("notify_update_timeout").getAsInt();
         }
     }
 

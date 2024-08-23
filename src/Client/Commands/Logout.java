@@ -24,8 +24,10 @@ public class Logout extends Command {
         Message.write(Request.class, output, new Request("/logout", Request.Methods.POST));
 
         Response response = Message.read(Response.class, input);
-        if (response.statusCode.equals(Response.StatusCode.OK))
+        if (response.statusCode.equals(Response.StatusCode.OK)) {
             status.setLogged(false);
+            status.getNotifyThread().interrupt();
+        }
 
         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
     }

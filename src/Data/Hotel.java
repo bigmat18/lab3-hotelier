@@ -1,5 +1,6 @@
 package Data;
 
+import java.security.KeyStore.Entry;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -62,13 +63,22 @@ public class Hotel {
 
     @Override
     public String toString() {
-        return  "\nRank: " + this.rank +
-                "\nName: " + this.name + 
-                "\nCity: " + this.city + 
-                "\nDescription: " + this.description + 
-                "\nPhone: " + this.phone + 
-                "\nServices: " + this.services.toString() + 
-                "\nRate: " + this.getRate() + 
-                "\nRatings: " + this.getRatings().toString();
+        String str =  "\n=======================================" +
+                      "\nLocal rank: " + this.rank +
+                      "\nName: " + this.name + 
+                      "\nCity: " + this.city + 
+                      "\nDescription: " + this.description + 
+                      "\nPhone: " + this.phone;
+        
+        str += "\nServices: ";
+        for(String entry : this.services)
+            str += entry + ", ";
+                              
+        str += "\nRate: " + this.getRate() + "\n";
+        
+        for(Map.Entry<String, Float> entry : this.getRatings().entrySet()) 
+            str += "- " + entry.getKey() + ": " + entry.getValue() + "\n";
+        
+        return str;
     }
 }

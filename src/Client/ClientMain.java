@@ -33,8 +33,8 @@ public class ClientMain {
     public static void main(String[] args) {
 
         try (Socket socket = new Socket(TCP_HOST, TCP_PORT);
-            DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-            DataInputStream input = new DataInputStream(socket.getInputStream())) {
+                DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                DataInputStream input = new DataInputStream(socket.getInputStream())) {
 
             System.out.print("\n" + //
                     "  _    _       _       _ _           \n" + //
@@ -47,7 +47,29 @@ public class ClientMain {
                     "                                     \n" + //
                     "");
 
+            Thread notify = new Thread() {
+                @Override
+                public void run() {
+                    try (NotifyReciever socket = new NotifyReciever(UDP_PORT, InetAddress.getByName(UDP_HOST),
+                            UDP_TIMEOUT)) {
+                        while (!Thread.interrupted()) {
+                            try {
+                                byte[] received = socket.receiveNotify();
+                                if (received != null)
+                                    System.out.print("\033[0K\r[NEWS] - " + (new String(received)) + "\n> ");
+
+                            } catch (SocketTimeoutException e) {
+                                continue;
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
             AppStatus status = new AppStatus();
+            status.setNotifyThread(notify);
+            
             CommandHandler cmdHandler = new CommandHandler(status);
             cmdHandler.addCommand(new Login());
             cmdHandler.addCommand(new Registration());
@@ -57,33 +79,13 @@ public class ClientMain {
             cmdHandler.addCommand(new InsertReview());
             cmdHandler.addCommand(new ShowBadge());
 
-            Thread notify = new Thread() {
-                public void run() {
-                    try(NotifyReciever socket = new NotifyReciever(UDP_PORT, InetAddress.getByName(UDP_HOST), UDP_TIMEOUT)) {
-                        while (!Thread.interrupted()) {
-                            try {
-
-                                byte[] received = socket.receiveNotify();
-                                System.out.print("\033[0K\r[NEWS] - " + (new String(received)) + "\n> ");
-
-                            }catch (SocketTimeoutException e) {
-                                continue;
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            notify.start();
-
             System.out.println(cmdHandler.getCommandsList());
 
-            while(status.isRunning()) {
+            while (status.isRunning()) {
                 cmdHandler.execute(input, output);
             }
             notify.interrupt();
-  
+
         } catch (Exception e) {
             e.printStackTrace();
         }

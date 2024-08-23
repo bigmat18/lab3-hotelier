@@ -39,6 +39,7 @@ public class Login extends Command {
         if (response.statusCode.equals(Response.StatusCode.OK)) {
             status.setLogged(true);
             status.setUsername(username);
+            status.getNotifyThread().start();
         } 
 
         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());

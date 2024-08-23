@@ -29,7 +29,7 @@ public class InsertReview extends Command {
         }
         
         String hotelCity = Keyboard.StringReader("city: ");
-        String hotelName = Keyboard.StringReader("naame: ");
+        String hotelName = Keyboard.StringReader("name: ");
 
         int rate = Keyboard.IntReader("Rate: ");
         int positionRate = Keyboard.IntReader("position rate: ");

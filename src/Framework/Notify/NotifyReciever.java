@@ -11,6 +11,7 @@ public class NotifyReciever implements AutoCloseable {
     private final int PORT;
     private byte[] buffer;
     private MulticastSocket socket;
+    private boolean use = false;
 
     public NotifyReciever(int port, InetAddress address, int timeout) 
         throws IOException, SecurityException, IllegalArgumentException 
@@ -27,6 +28,10 @@ public class NotifyReciever implements AutoCloseable {
     public byte[] receiveNotify() throws DataTooLongException, IOException {
         DatagramPacket packet = new DatagramPacket(this.buffer, this.buffer.length);
         socket.receive(packet);
+
+        use = !use;
+        if(use) 
+            return null;
 
         ByteBuffer sizeBuffer = ByteBuffer.wrap(packet.getData());  
         int size = sizeBuffer.getInt();

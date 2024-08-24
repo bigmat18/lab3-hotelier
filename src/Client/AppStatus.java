@@ -20,5 +20,5 @@ public class AppStatus {
 
     public void setUsername(String username) { this.username = username; }
 
-    public void setNotifyThread(Thread thread) { this.notifyThread = notifyThread; }
+    public void setNotifyThread(Thread thread) { this.notifyThread = thread; }
 }

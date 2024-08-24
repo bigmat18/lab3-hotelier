@@ -41,6 +41,7 @@ public class RankingCalculator {
     public void calculateAndUpdate() 
         throws DatabaseInizializeException, DataTooLongException, IOException, TableNoExistsException
     {
+        System.out.println("Ranking update");
         this.updateRanking();
         Database.sort(Hotel.class, this.comparator);
         ArrayList<Hotel> hotels = Database.select(Hotel.class, entry -> true);

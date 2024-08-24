@@ -33,8 +33,8 @@ public class ClientMain {
     public static void main(String[] args) {
 
         try (Socket socket = new Socket(TCP_HOST, TCP_PORT);
-                DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-                DataInputStream input = new DataInputStream(socket.getInputStream())) {
+             DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+             DataInputStream input = new DataInputStream(socket.getInputStream())) {
 
             System.out.print("\n" + //
                     "  _    _       _       _ _           \n" + //

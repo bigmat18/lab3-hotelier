@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -41,7 +43,6 @@ public class RankingCalculator {
     public void calculateAndUpdate() 
         throws DatabaseInizializeException, DataTooLongException, IOException, TableNoExistsException
     {
-        System.out.println("Ranking update");
         this.updateRanking();
         Database.sort(Hotel.class, this.comparator);
         ArrayList<Hotel> hotels = Database.select(Hotel.class, entry -> true);
@@ -70,15 +71,20 @@ public class RankingCalculator {
                                                                                            entity.getHotelName().equals(hotel.getName()));
 
             float value = 0; // R
-            for (Review review : reviews)
-                value += (review.getRate() * 0.5) +
-                         (review.getPositionRate() * 0.125) +
-                         (review.getCleaningRate() * 0.125) +
-                         (review.getServiceRate() * 0.125) +
-                         (review.getPriceRate() * 0.125) *
-                         review.getDateCreation().getNano();
+            float totalWight = 0;
 
-            value /= reviews.size();
+            for (Review review : reviews) {
+                long deltaTime = Duration.between(review.getDateCreation(), LocalDateTime.now()).toDays();
+                float timeWeight = (float)Math.exp(-0.1 * deltaTime);
+
+                value += timeWeight * ((review.getRate() * 0.5) +
+                         (review.getPositionRate() + review.getCleaningRate() + review.getServiceRate() + review.getPriceRate()) * 0.125);
+                
+                totalWight += timeWeight;
+            }
+            float norm = reviews.size() * totalWight;
+            value /= norm != 0 ? norm : 1;
+
             avgRate.add(i, value);
             reviewNumber.add(i, reviews.size());
 

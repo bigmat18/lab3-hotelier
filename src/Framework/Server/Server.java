@@ -12,20 +12,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import Data.Hotel;
-import Data.Review;
-import Data.User;
-import Framework.Database.Database;
 import Framework.Notify.NotifySender;
-
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Server implements AutoCloseable {
     public int PORT;
@@ -34,18 +24,17 @@ public class Server implements AutoCloseable {
     public int NOTIFY_PORT;
     public String NOTIFY_ADDRESS;
     public int DATA_SAVE_TIMEOUT;
-    public int NOTIFY_UPDATE_TIMEOUT;
+    public int NOTIFY_TIMEOUT;
 
     private ServerSocket server;
     private ExecutorService pool;
     private NotifySender sender;
     private File file;
-    private ArrayList<Timer> tasks;
 
     public Server()
             throws IOException, SecurityException, IllegalArgumentException 
     {
-        this("config.json");
+        this("config_server.json");
     }
 
     public Server(String settingFileName)
@@ -69,7 +58,7 @@ public class Server implements AutoCloseable {
             this.NOTIFY_ADDRESS = obj.get("notify_address").getAsString();
             this.NOTIFY_PORT = obj.get("notify_port").getAsInt();
             this.DATA_SAVE_TIMEOUT = obj.get("data_save_timeout").getAsInt();
-            this.NOTIFY_UPDATE_TIMEOUT = obj.get("notify_update_timeout").getAsInt();
+            this.NOTIFY_TIMEOUT = obj.get("notify_timeout").getAsInt();
         }
     }
 

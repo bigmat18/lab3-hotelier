@@ -1,0 +1,7 @@
+{
+  "tcp_address": "0.0.0.0",
+  "tcp_port": 8080,
+  "notify_port": 8888,
+  "notify_address": "239.0.0.1",
+  "notify_timeout": 4000
+}

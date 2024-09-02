@@ -10,19 +10,19 @@ FW_SERVER = $(SRC_DIR)/Framework/Server/*.java
 FW_NOTIFY = $(SRC_DIR)/Framework/Notify/*.java
 
 server: 
-	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Server/*.java $(FW_DB) $(FW_SERVER) $(FW_NOTIFY) $(SRC_DIR)/Data/*.java -d $(BIN_DIR)
+	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/ServerApp/*.java $(FW_DB) $(FW_SERVER) $(FW_NOTIFY) $(SRC_DIR)/Data/*.java -d $(BIN_DIR)
 
 client: 
-	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/Client/*.java $(SRC_DIR)/Client/Commands/*.java $(FW_DB) $(FW_SERVER) $(FW_NOTIFY) $(SRC_DIR)/Data/*.java  -d $(BIN_DIR)
+	javac -cp ${LIB_DIR}/gson.jar $(SRC_DIR)/ClientApp/*.java $(SRC_DIR)/ClientApp/Commands/*.java $(FW_DB) $(FW_SERVER) $(FW_NOTIFY) $(SRC_DIR)/Data/*.java  -d $(BIN_DIR)
 
 clean: 
-	rm -rf $(BIN_DIR)/Client/* $(BIN_DIR)/Server/* $(BIN_DIR)/Framework/* $(BIN_DIR)/Data/*
+	rm -rf $(BIN_DIR)/ClientApp/* $(BIN_DIR)/ServerApp/* $(BIN_DIR)/Framework/* $(BIN_DIR)/Data/*
 
 run_server: 
-	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar Server.ServerMain
+	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar ServerApp.ServerMain
 
 run_client: 
-	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar Client.ClientMain
+	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar ClientApp.ClientMain
 
 # jar_server:
 # 	echo "Manifest-Version: 1.0" > $(BIN_DIR)/server.mf

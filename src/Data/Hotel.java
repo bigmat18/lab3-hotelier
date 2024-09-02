@@ -16,7 +16,7 @@ public class Hotel {
     private Map<String, Float> ratings;
     private ArrayList<String> services;
     
-    public transient double rank = 0.0;
+    public transient double rank;
 
     public Hotel(int id,
                  String name,
@@ -27,6 +27,7 @@ public class Hotel {
                  float rate,
                  Map<String, Float> ratings) 
     {
+        this.rank = 0.0;
         this.id = id;
         this.name = name;
         this.description = description;
@@ -64,7 +65,6 @@ public class Hotel {
     @Override
     public String toString() {
         String str =  "\n=======================================" +
-                      "\nLocal rank: " + this.rank +
                       "\nName: " + this.name + 
                       "\nCity: " + this.city + 
                       "\nDescription: " + this.description + 

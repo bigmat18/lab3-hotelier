@@ -22,4 +22,18 @@ run_server:
 	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar Server.ServerMain
 
 run_client: 
-	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar Client.ClientMain 0.0.0.0
+	java -cp $(BIN_DIR):$(LIB_DIR)/gson.jar Client.ClientMain
+
+# jar_server:
+# 	echo "Manifest-Version: 1.0" > $(BIN_DIR)/server.mf
+# 	echo "Main-Class: server.ServerMain" >> $(BIN_DIR)/server.mf
+# 	echo "Class-Path: $(EXT_LIBS)" >> $(BIN_DIR)/server.mf
+
+# 	jar -cvfm $(BIN_DIR)/server.jar $(BIN_DIR)/server.mf -C $(BIN_DIR) . $(LIB_DIR)/*
+
+# jar_client:
+# 	echo "Manifest-Version: 1.0" > $(BIN_DIR)/client.mf
+# 	echo "Main-Class: client.ClientMain" >> $(BIN_DIR)/client.mf
+# 	echo "Class-Path: $(EXT_LIBS)" >> $(BIN_DIR)/client.mf
+
+# 	jar -cvfm $(BIN_DIR)/client.jar $(BIN_DIR)/client.mf -C $(BIN_DIR) . $(LIB_DIR)/*

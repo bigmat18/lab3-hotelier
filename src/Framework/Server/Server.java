@@ -76,7 +76,7 @@ public class Server implements AutoCloseable {
     public void run()
             throws IOException, SecurityException, RejectedExecutionException, NullPointerException 
     {
-        System.out.println("Running server in " + PORT);
+        System.out.println("[SERVER] Running server on " + PORT);
         while (!Thread.interrupted()) {
             Socket connection = this.server.accept();
             System.out.println("Connection opened with: " + connection.getInetAddress());

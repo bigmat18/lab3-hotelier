@@ -1,6 +1,8 @@
 package Server;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -58,7 +60,7 @@ public class ServerMain {
                 @Override
                 public void run() {
                     try {
-                        System.out.println("Shutdown server");
+                        System.out.println("[SERVER] Shutdown server.");
                         rankingTimer.cancel();
                         Database.shutdown();
                     } catch (Exception e) {
@@ -68,6 +70,10 @@ public class ServerMain {
             });
 
             server.run();
+        } catch (BindException e) {
+            System.out.println("[SERVER] La porta richiesta dal server è attualmente in uso da un altro processo.");
+        } catch (FileNotFoundException e) {
+            System.out.println("[SERVER] Il file di configuarazioni config.json non è stato trovato.");
         } catch (Exception e) {
             e.printStackTrace();
         }

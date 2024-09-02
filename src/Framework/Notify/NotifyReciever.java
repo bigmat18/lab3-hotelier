@@ -29,6 +29,10 @@ public class NotifyReciever implements AutoCloseable {
         DatagramPacket packet = new DatagramPacket(this.buffer, this.buffer.length);
         socket.receive(packet);
 
+        use = !use;
+        if(use) 
+            return null;
+
         ByteBuffer sizeBuffer = ByteBuffer.wrap(packet.getData());  
         int size = sizeBuffer.getInt();
 

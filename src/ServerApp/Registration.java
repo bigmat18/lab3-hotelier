@@ -2,12 +2,11 @@ package ServerApp;
 
 import java.util.ArrayList;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import Data.User;
 import Framework.Database.Database;
-import Framework.Server.Endpoint;;
+import Framework.Server.Endpoint;
 import Framework.Server.Request;
 import Framework.Server.Response;
 

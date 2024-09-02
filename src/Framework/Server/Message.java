@@ -3,11 +3,9 @@ package Framework.Server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -28,7 +26,7 @@ public class Message {
     }
 
     public Message(Object body) {
-        this.body = this.gson.toJson(body);
+        this.body = gson.toJson(body);
     }
 
     public static <T> T getMessage(Class<T> clazz, String str) { return gson.fromJson(str, clazz); }

@@ -3,9 +3,7 @@ package Framework.Server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 public class RequestHandler implements Runnable {
     private Socket connection;

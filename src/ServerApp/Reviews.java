@@ -9,7 +9,7 @@ import Data.Review;
 import Data.User;
 
 import Framework.Database.Database;
-import Framework.Server.Endpoint;;
+import Framework.Server.Endpoint;
 import Framework.Server.Request;
 import Framework.Server.Response;
 

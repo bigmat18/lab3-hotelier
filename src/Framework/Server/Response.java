@@ -1,7 +1,5 @@
 package Framework.Server;
 
-import com.google.gson.JsonObject;
-
 public class Response extends Message {
     public enum StatusCode {
         OK                              (200, "OK"),

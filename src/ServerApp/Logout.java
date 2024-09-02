@@ -1,7 +1,6 @@
 package ServerApp;
 
-import Framework.Database.Database;
-import Framework.Server.Endpoint;;
+import Framework.Server.Endpoint;
 import Framework.Server.Request;
 import Framework.Server.Response;
 

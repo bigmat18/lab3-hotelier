@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 
 import Data.User;
 import Framework.Database.Database;
-import Framework.Database.DatabaseInizializeException;
 import Framework.Server.Endpoint;
 import Framework.Server.Request;
 import Framework.Server.Response;

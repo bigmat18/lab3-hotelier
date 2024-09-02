@@ -1,7 +1,5 @@
 package Framework.Server;
 
-import Data.User;
-
 public class Endpoint {
 
     public Response GET(Request request) {

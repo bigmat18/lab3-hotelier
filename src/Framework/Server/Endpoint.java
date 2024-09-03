@@ -30,8 +30,8 @@ public class Endpoint {
 
     protected static String createSession(String identifier) throws DatabaseInizializeException, TableNoExistsException {
         Session session = new Session(identifier);
-        ArrayList<Session> sessions = Database.select(Session.class, entry -> (entry.getToken().equals(session.getToken()) || 
-                                                                                         entry.getIdentifier().equals(entry.getIdentifier())));
+        ArrayList<Session> sessions = Database.select(Session.class, entry -> (entry.getToken().equals(session.getToken()) || entry.getIdentifier().equals(identifier)));
+
         if(!sessions.isEmpty()) 
             return null;
 
@@ -39,6 +39,7 @@ public class Endpoint {
             Database.insert(Session.class, session);
             return session.getToken();
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

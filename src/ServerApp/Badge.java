@@ -15,9 +15,11 @@ public class Badge extends Endpoint {
         JsonObject data = request.getBody().getAsJsonObject();
 
         try {
-            ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername()
-                                                                                        .equals(data.get("username")
-                                                                                                    .getAsString()));
+            String identifier = checkSession(data.get("token").getAsString());
+            if(identifier == null)
+                return new Response(Response.StatusCode.NON_AUTHORITATIVE_INFORMATION, "you must be authenticated");
+
+            ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername().equals(identifier));
 
             if (users.isEmpty())
                 return new Response(Response.StatusCode.BAD_REQUEST, "User doen't exist");

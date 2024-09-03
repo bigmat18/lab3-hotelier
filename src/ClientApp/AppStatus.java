@@ -2,23 +2,20 @@ package ClientApp;
 
 public class AppStatus {
     private boolean running = true;
-    private boolean logged = false;
-    private String username = "";
-    private Thread notifyThread;
+    private String token = null;
+    private RankingNotify notify;
 
     public boolean isRunning() { return this.running; }
 
-    public boolean isLogged() { return this.logged; }
+    public boolean isLogged() { return this.token != null; }
 
-    public String getUsername() { return this.username; }
+    public String getToken() { return this.token; }
 
-    public Thread getNotifyThread() { return this.notifyThread; }
+    public RankingNotify getNotify() { return this.notify; }
 
-    public void setRunning(boolean running) { this.running = running; } 
+    public void setRunning(boolean running) { this.running = running; }
 
-    public void setLogged(boolean logged) { this.logged = logged; }
+    public void setToken(String token) { this.token = token; }
 
-    public void setUsername(String username) { this.username = username; }
-
-    public void setNotifyThread(Thread thread) { this.notifyThread = thread; }
+    public void setNotify(RankingNotify notify) { this.notify = notify; }
 }

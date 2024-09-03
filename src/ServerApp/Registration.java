@@ -30,8 +30,16 @@ public class Registration extends Endpoint {
             Database.insert(User.class,
                             data.get("password").getAsString(), 
                             data.get("username").getAsString());
+
+            String token = createSession(data.get("username").getAsString());
+            if (token == null)
+                return new Response(Response.StatusCode.BAD_REQUEST, "Error in session creation");
+
+            JsonObject response = new JsonObject();
+            response.addProperty("message", "Registration successfull with " + data.get("username").getAsString());
+            response.addProperty("token", token);
                             
-            return new Response(Response.StatusCode.CREATED, "Registration sucessfull with " + data.get("username").getAsString());
+            return new Response(Response.StatusCode.CREATED, response);
         } catch(Exception e) {
             return new Response(Response.StatusCode.INTERNAL_SERVER_ERROR,  e.getMessage());
         }

@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 
 import ClientApp.AppStatus;
 import ClientApp.Command;
-import ClientApp.Keyboard;
 import Framework.Server.Message;
 import Framework.Server.Request;
 import Framework.Server.Response;
@@ -21,12 +20,15 @@ public class Logout extends Command {
     }
 
     public void execution(DataInputStream input, DataOutputStream output, AppStatus status) throws IOException {
-        Message.write(Request.class, output, new Request("/logout", Request.Methods.POST));
+        JsonObject obj = new JsonObject();
+        obj.addProperty("token", status.getToken());
+
+        Message.write(Request.class, output, new Request("/logout", Request.Methods.POST, obj));
 
         Response response = Message.read(Response.class, input);
         if (response.statusCode.equals(Response.StatusCode.OK)) {
-            status.setLogged(false);
-            status.getNotifyThread().interrupt();
+            status.setToken(null);
+            status.getNotify().leaveGroup();
         }
 
         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());

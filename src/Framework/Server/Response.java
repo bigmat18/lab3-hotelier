@@ -1,5 +1,7 @@
 package Framework.Server;
 
+import com.google.gson.JsonObject;
+
 public class Response extends Message {
     public enum StatusCode {
         OK                              (200, "OK"),
@@ -44,6 +46,11 @@ public class Response extends Message {
     }
 
     public Response(StatusCode code, Object body) {
+        super(body);
+        this.statusCode = code;
+    }
+
+    public Response(StatusCode code, JsonObject body) {
         super(body);
         this.statusCode = code;
     }

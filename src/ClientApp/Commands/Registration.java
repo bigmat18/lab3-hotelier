@@ -37,9 +37,8 @@ public class Registration extends Command {
 
         Response response = Message.read(Response.class, input);
         if (response.statusCode.equals(Response.StatusCode.CREATED)) {
-            status.setLogged(true);
-            status.setUsername(username);
-            status.getNotifyThread().start();
+            status.setToken(response.getBody().getAsJsonObject().get("token").getAsString());
+            status.getNotify().joinGroup();
         } 
         System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
     }

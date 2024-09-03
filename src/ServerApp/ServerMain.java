@@ -15,23 +15,18 @@ import Framework.Database.Database;
 public class ServerMain {
 
     public static void main(String[] args) throws Exception {
+        Database.addTable(User.class);
+        Database.addTable(Hotel.class);
+        Database.addTable(Review.class);
+
+        Router.addEndpoint("/login", new Login());
+        Router.addEndpoint("/registration", new Registration());
+        Router.addEndpoint("/logout", new Logout());
+        Router.addEndpoint("/hotels", new Hotels());
+        Router.addEndpoint("/reviews", new Reviews());
+        Router.addEndpoint("/badge", new Badge());
 
         try (Server server = new Server()) {
-
-            Database.setDataPath(server.DATA_DIR);
-            Database.addTable(User.class);
-            Database.addTable(Hotel.class);
-            Database.addTable(Review.class);
-            Database.inizialize();
-
-            Router.addEndpoint("/login", new Login());
-            Router.addEndpoint("/registration", new Registration());
-            Router.addEndpoint("/logout", new Logout());
-            Router.addEndpoint("/hotels", new Hotels());
-            Router.addEndpoint("/reviews", new Reviews());
-            Router.addEndpoint("/badge", new Badge());
-            Router.inizialize();
-
             RankingCalculator rank = new RankingCalculator(server.getNotifySender());
             Timer rankingTimer = new Timer();
             rankingTimer.schedule(new TimerTask() {

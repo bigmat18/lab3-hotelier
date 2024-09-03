@@ -18,32 +18,41 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 public class Table<T> {
-    private File file;
     private final String fileName;
+    private File file;
     private ArrayList<T> elements;
     private boolean isAlredyCreated;
+    private Class<T> table;
+    
+    Table(Class<T> table) {
+        this.fileName = null;
+        this.elements = new ArrayList<>();
+        this.table = table;
+    }
 
     Table(Class<T> table, String fileName, Gson gson) throws IOException {
         this(table, fileName);
-        if(!this.isAlredyCreated)
-            this.loadData(table, gson);
     }
 
     Table(Class<T> table, String fileName) throws IOException{
         this.fileName = fileName;
         this.elements = new ArrayList<>();
-
-        this.file = new File(fileName);
-        this.isAlredyCreated = !this.file.exists();
-        this.file.createNewFile();
+        this.table = table;
     }
     
-    public void loadData(Class<T> table, Gson gson) throws IOException{
+    public void loadData(Gson gson, String path) throws IOException{
+        this.file = new File(path + fileName);
+        this.isAlredyCreated = !this.file.exists();
+        this.file.createNewFile();
+        
+        if(this.isAlredyCreated)
+            return;
+
         try (FileReader reader = new FileReader(this.file, StandardCharsets.UTF_8)) {
             JsonArray jsonArrayOfItems = JsonParser.parseReader(reader).getAsJsonArray();
             
             for (JsonElement element : jsonArrayOfItems) {
-                T data = gson.fromJson(element, table);
+                T data = gson.fromJson(element, this.table);
                 this.elements.add(data);
             }
         }
@@ -80,6 +89,8 @@ public class Table<T> {
     public void sort(Comparator<T> compare) {
         Collections.sort(this.elements, compare);
     }
+
+    public boolean isTableStored() { return this.fileName != null; }
     
     @Override
     public String toString() {

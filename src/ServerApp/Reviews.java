@@ -22,8 +22,11 @@ public class Reviews extends Endpoint {
             return new Response(Response.StatusCode.BAD_REQUEST, "Value in rates must be between 0 and 5");
             
         try {
-            String username = data.get("username").getAsString();
-            ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername().equals(username));
+            String identifier = checkSession(data.get("token").getAsString());
+            if(identifier == null)
+                return new Response(Response.StatusCode.NON_AUTHORITATIVE_INFORMATION, "you must be authenticated");
+
+            ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername().equals(identifier));
             if (users.isEmpty())
                 return new Response(Response.StatusCode.BAD_REQUEST, "User doesn't exits");
 
@@ -39,7 +42,7 @@ public class Reviews extends Endpoint {
                                                     data.get("cleaningRate").getAsInt(),
                                                     data.get("servicesRate").getAsInt(),
                                                     data.get("priceRate").getAsInt(),
-                                                    username,
+                                                    users.get(0).getUsername(),
                                                     hotelName,
                                                     hotelCity);
 

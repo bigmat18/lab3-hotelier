@@ -4,13 +4,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ClientApp.AppStatus;
 import ClientApp.Command;
 import ClientApp.Keyboard;
-import Data.Hotel;
 import Framework.Server.Message;
 import Framework.Server.Request;
 import Framework.Server.Response;
@@ -40,7 +38,7 @@ public class InsertReview extends Command {
         JsonObject obj = new JsonObject();
         obj.addProperty("hotelCity", hotelCity);
         obj.addProperty("hotelName", hotelName);
-        obj.addProperty("username", status.getUsername());
+        obj.addProperty("token", status.getToken());
 
         obj.addProperty("rate", rate);
         obj.addProperty("positionRate", positionRate);

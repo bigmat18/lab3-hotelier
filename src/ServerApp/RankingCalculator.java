@@ -49,6 +49,7 @@ public class RankingCalculator {
             if(!this.topLocalRank.get(hotel.getCity()).getName().equals(hotel.getName()) && 
                 this.topLocalRank.get(hotel.getCity()).rank < hotel.rank) 
             {
+                System.out.println("Send notify");
                 this.topLocalRank.put(hotel.getCity(), hotel);
                 this.sender.sendNotify("In city " + hotel.getCity() + " the new top hotel is " + hotel.getName());
             }

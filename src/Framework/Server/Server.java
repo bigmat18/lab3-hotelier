@@ -12,9 +12,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.crypto.Data;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import Framework.Database.Database;
+import Framework.Database.DatabaseInizializeException;
 import Framework.Notify.NotifySender;
 
 public class Server implements AutoCloseable {
@@ -32,13 +36,13 @@ public class Server implements AutoCloseable {
     private File file;
 
     public Server()
-            throws IOException, SecurityException, IllegalArgumentException 
+            throws IOException, SecurityException, IllegalArgumentException, DatabaseInizializeException
     {
         this("config_server.json");
     }
 
     public Server(String settingFileName)
-        throws IOException, SecurityException, IllegalArgumentException 
+        throws IOException, SecurityException, IllegalArgumentException, DatabaseInizializeException
     {
         this.file = new File(settingFileName);
         this.loadData();
@@ -46,6 +50,11 @@ public class Server implements AutoCloseable {
         this.server = new ServerSocket(this.PORT);
         this.pool = Executors.newFixedThreadPool(this.THREAD_NUM);
         this.sender = new NotifySender(this.NOTIFY_PORT, InetAddress.getByName(this.NOTIFY_ADDRESS));
+
+        Database.setDataPath(this.DATA_DIR);
+        Database.addTableWithoutFile(Session.class);
+        Database.inizialize();
+        Router.inizialize();
     }
 
     private void loadData() throws IOException {
@@ -63,7 +72,7 @@ public class Server implements AutoCloseable {
     }
 
     public void run()
-            throws IOException, SecurityException, RejectedExecutionException, NullPointerException 
+            throws IOException, SecurityException, RejectedExecutionException, NullPointerException
     {
         System.out.println("[SERVER] Running server on " + PORT);
         while (!Thread.interrupted()) {

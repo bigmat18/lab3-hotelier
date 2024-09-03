@@ -9,6 +9,7 @@ public class Router {
 
     public static void inizialize() { 
         isInit = true;
+        System.out.println("[ROUTER] Inizialization completed.");
     }
 
     public static void addEndpoint(String url, Endpoint ep) throws RouterInizializeException{ 

@@ -58,27 +58,12 @@ public class ClientMain {
                     "                                     \n" + //
                     "");
 
-            Thread notify = new Thread() {
-                @Override
-                public void run() {
-                    try (NotifyReciever socket = new NotifyReciever(NOTIFY_PORT, InetAddress.getByName(NOTIFY_HOST), NOTIFY_TIMEOUT)) {
-                        while (!Thread.interrupted()) {
-                            try {
-                                byte[] received = socket.receiveNotify();
-                                if (received != null)
-                                    System.out.print("\033[0K\r[NEWS] - " + (new String(received)) + "\n> ");
+            RankingNotify notify = new RankingNotify(NOTIFY_HOST, NOTIFY_PORT, NOTIFY_TIMEOUT);
+            Thread thread = new Thread(notify);
+            thread.start();
 
-                            } catch (SocketTimeoutException e) {
-                                continue;
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.out.println("[ERROR] Error in notify thread (" + e.getLocalizedMessage() + ")");
-                    }
-                }
-            };
             AppStatus status = new AppStatus();
-            status.setNotifyThread(notify);
+            status.setNotify(notify);
             
             CommandHandler cmdHandler = new CommandHandler(status);
             cmdHandler.addCommand(new Login());
@@ -94,7 +79,7 @@ public class ClientMain {
             while (status.isRunning()) {
                 cmdHandler.execute(input, output);
             }
-            notify.interrupt();
+            thread.interrupt();
 
         } catch (Exception e) {
             System.out.println("[ERROR] Error in app (" + e.getLocalizedMessage() + ")");

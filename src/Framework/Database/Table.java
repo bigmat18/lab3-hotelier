@@ -87,7 +87,9 @@ public class Table<T> {
     }
     
     public void sort(Comparator<T> compare) {
-        Collections.sort(this.elements, compare);
+        synchronized(this.elements) {
+            Collections.sort(this.elements, compare);
+        }
     }
 
     public boolean isTableStored() { return this.fileName != null; }

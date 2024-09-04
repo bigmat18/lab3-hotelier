@@ -41,7 +41,7 @@ public class Table<T> {
     }
     
     public void loadData(Gson gson, String path) throws IOException{
-        this.file = new File(path + fileName);
+        this.file = new File(path + "/" + fileName);
         this.isAlredyCreated = !this.file.exists();
         this.file.createNewFile();
         

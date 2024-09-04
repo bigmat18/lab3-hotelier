@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -33,7 +34,7 @@ public class ClientMain {
     private static int NOTIFY_PORT;
     private static int NOTIFY_TIMEOUT;
 
-    private static final String CONFIG_FILE_NAME = "config_client.json";
+    private static final String CONFIG_FILE_NAME = "config_client.properties";
 
     public static void main(String[] args) {
         try {
@@ -87,15 +88,17 @@ public class ClientMain {
     }
 
     public static void Inizialize() throws IOException {
-        File file = new File("config_client.json");
-        try (FileReader reader = new FileReader(file, StandardCharsets.UTF_8)) {
-            JsonObject obj = JsonParser.parseReader(reader).getAsJsonObject();
+        File file = new File(CONFIG_FILE_NAME);
 
-            TCP_ADDRESS = obj.get("tcp_address").getAsString();
-            TCP_PORT = obj.get("tcp_port").getAsInt();
-            NOTIFY_HOST = obj.get("notify_address").getAsString();
-            NOTIFY_PORT = obj.get("notify_port").getAsInt();
-            NOTIFY_TIMEOUT = obj.get("notify_timeout").getAsInt();
+        try (FileReader reader = new FileReader(file, StandardCharsets.UTF_8)) {
+            Properties properties = new Properties();
+            properties.load(reader);
+
+            TCP_ADDRESS = properties.getProperty("tcp_address");
+            TCP_PORT = Integer.parseInt(properties.getProperty("tcp_port"));
+            NOTIFY_HOST = properties.getProperty("notify_address");
+            NOTIFY_PORT = Integer.parseInt(properties.getProperty("notify_port"));
+            NOTIFY_TIMEOUT = Integer.parseInt(properties.getProperty("notify_timeout"));
         }
     }
 }

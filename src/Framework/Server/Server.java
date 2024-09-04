@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -36,7 +37,7 @@ public class Server implements AutoCloseable {
     public Server()
             throws IOException, SecurityException, IllegalArgumentException, DatabaseInizializeException
     {
-        this("config_server.json");
+        this("config_server.properties");
     }
 
     public Server(String settingFileName)
@@ -56,16 +57,18 @@ public class Server implements AutoCloseable {
     }
 
     private void loadData() throws IOException {
+        
         try (FileReader reader = new FileReader(this.file, StandardCharsets.UTF_8)) {
-            JsonObject obj = JsonParser.parseReader(reader).getAsJsonObject();
+            Properties properties = new Properties();
+            properties.load(reader);
 
-            this.PORT = obj.get("server_port").getAsInt();
-            this.THREAD_NUM = obj.get("thread_num").getAsInt();
-            this.DATA_DIR = obj.get("data_dir").getAsString();
-            this.NOTIFY_ADDRESS = obj.get("notify_address").getAsString();
-            this.NOTIFY_PORT = obj.get("notify_port").getAsInt();
-            this.DATA_SAVE_TIMEOUT = obj.get("data_save_timeout").getAsInt();
-            this.NOTIFY_TIMEOUT = obj.get("notify_timeout").getAsInt();
+            this.PORT = Integer.parseInt(properties.getProperty("server_port"));
+            this.THREAD_NUM = Integer.parseInt(properties.getProperty("thread_num"));
+            this.DATA_DIR = properties.getProperty("data_dir");
+            this.NOTIFY_ADDRESS = properties.getProperty("notify_address");
+            this.NOTIFY_PORT = Integer.parseInt(properties.getProperty("notify_port"));
+            this.DATA_SAVE_TIMEOUT = Integer.parseInt(properties.getProperty("data_save_timeout"));
+            this.NOTIFY_TIMEOUT = Integer.parseInt(properties.getProperty("notify_timeout"));
         }
     }
 

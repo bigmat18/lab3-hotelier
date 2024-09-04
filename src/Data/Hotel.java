@@ -47,17 +47,17 @@ public class Hotel {
     public synchronized void setRate(float rate) { 
         this.rate = (this.rate + rate) / (this.rate == 0 ? 1 : 2); 
     }
-    public synchronized Map<String, Float> getRatings() { return this.ratings; }
+    public Map<String, Float> getRatings() { return this.ratings; }
 
-    public synchronized void setCleaningRate(float rate) { this.setRatings("cleaning", rate); }
+    public void setCleaningRate(float rate) { this.setRatings("cleaning", rate); }
 
-    public synchronized void setPositionRate(float rate) { this.setRatings("position", rate); }
+    public void setPositionRate(float rate) { this.setRatings("position", rate); }
 
     public void setServicesRate(float rate) { this.setRatings("services", rate); }
 
     public void setQualityRate(float rate) { this.setRatings("quality", rate); }
 
-    private void setRatings(String name, float rate) {
+    private synchronized void setRatings(String name, float rate) {
         float value = this.ratings.get(name);
         this.ratings.put(name, (value + rate) / (value == 0 ? 1 : 2));
     }

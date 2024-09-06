@@ -5,7 +5,12 @@ Build all project use
 ```
 make
 ```
-Run project with
+Run server with
 ```
-make run_server & make run_client
+make run_server
+```
+client with
+
+```
+make make run_client
 ```

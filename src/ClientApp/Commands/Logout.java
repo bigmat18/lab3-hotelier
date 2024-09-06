@@ -20,6 +20,10 @@ public class Logout extends Command {
     }
 
     public void execution(DataInputStream input, DataOutputStream output, AppStatus status) throws IOException {
+        if (!status.isLogged()) {
+            System.out.println("[Error] User isn't logged in");
+            return;
+        }
         JsonObject obj = new JsonObject();
         obj.addProperty("token", status.getToken());
 

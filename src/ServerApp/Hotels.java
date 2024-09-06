@@ -24,7 +24,7 @@ public class Hotels extends Endpoint {
                                                       entry -> ((name == null || entry.getName().equals(name.getAsString())) &&
                                                                 (city == null || entry.getCity().equals(city.getAsString()))));
             if(hotels.isEmpty())
-                return new Response(Response.StatusCode.BAD_REQUEST, "No hotels exits");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] Hotel doen't exist");
 
             if (ordering != null && ordering.getAsBoolean())
                 hotels.sort(Comparator.comparing(Hotel::getRate).reversed());

@@ -22,17 +22,17 @@ public class Login extends Endpoint {
                                                                                         .getAsString()));
 
             if (users.isEmpty())
-                return new Response(Response.StatusCode.BAD_REQUEST, "User not exists");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] User doesn't exists");
 
             if (!users.get(0).getPassword().equals(data.get("password").getAsString()))
-                return new Response(Response.StatusCode.BAD_REQUEST, "Password incorrect");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] Password isn't correct");
 
             String token = createSession(data.get("username").getAsString());
             if(token == null)
-                return new Response(Response.StatusCode.BAD_REQUEST, "Error in session creation, probably someone is just logged with this account");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] Problem session creation, probably someone is just logged with this account");
 
             JsonObject response = new JsonObject();
-            response.addProperty("message", "Login sucessfull with " + data.get("username").getAsString());
+            response.addProperty("message", "[Ok] Login sucessfull with " + data.get("username").getAsString());
             response.addProperty("token", token);
             return new Response(Response.StatusCode.OK, response);
             

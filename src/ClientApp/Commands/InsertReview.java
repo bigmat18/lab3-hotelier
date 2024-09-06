@@ -22,7 +22,7 @@ public class InsertReview extends Command {
 
     public void execution(DataInputStream input, DataOutputStream output, AppStatus status) throws IOException {
         if (!status.isLogged()) {
-            System.out.println("You must be logged");
+            System.out.println("[Error] You must be logged");
             return;
         }
         
@@ -30,10 +30,10 @@ public class InsertReview extends Command {
         String hotelName = Keyboard.StringReader("name: ");
 
         int rate = Keyboard.IntReader("Rate: ");
-        int positionRate = Keyboard.IntReader("position rate: ");
-        int cleaningRate = Keyboard.IntReader("cleaning rate: ");
-        int servicesRate = Keyboard.IntReader("service rate: ");
-        int priceRate = Keyboard.IntReader("price rate: ");
+        int positionRate = Keyboard.IntReader("Position rate: ");
+        int cleaningRate = Keyboard.IntReader("Cleaning rate: ");
+        int servicesRate = Keyboard.IntReader("Service rate: ");
+        int priceRate = Keyboard.IntReader("Price rate: ");
 
         JsonObject obj = new JsonObject();
         obj.addProperty("hotelCity", hotelCity);

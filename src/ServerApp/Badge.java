@@ -17,12 +17,12 @@ public class Badge extends Endpoint {
         try {
             String identifier = checkSession(data.get("token").getAsString());
             if(identifier == null)
-                return new Response(Response.StatusCode.NON_AUTHORITATIVE_INFORMATION, "you must be authenticated");
+                return new Response(Response.StatusCode.NON_AUTHORITATIVE_INFORMATION, "[Error] You must be authenticated");
 
             ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername().equals(identifier));
 
             if (users.isEmpty())
-                return new Response(Response.StatusCode.BAD_REQUEST, "User doen't exist");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] User doesn't exist");
 
             return new Response(Response.StatusCode.OK, users.get(0).getBandge());
         } catch (Exception e) {

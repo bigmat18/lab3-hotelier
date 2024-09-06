@@ -21,11 +21,11 @@ public class Registration extends Endpoint {
                                                                                                     .getAsString()));
 
             if(!users.isEmpty())
-                return new Response(Response.StatusCode.BAD_REQUEST, "Username altredy exists");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] A user with this username already exists");
 
             if(!User.isPasswordValid(data.get("password").getAsString()))
-                return new Response(Response.StatusCode.BAD_REQUEST, "Password not valid (it must contains a capital letter, a number, "+
-                                                                    "a special character and it must be at least 8 characters long)");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] Password not valid (it must contains a capital letter, a number, " +
+                                                                              "a special character and it must be at least 8 characters long)");
 
             Database.insert(User.class,
                             data.get("password").getAsString(), 
@@ -33,10 +33,10 @@ public class Registration extends Endpoint {
 
             String token = createSession(data.get("username").getAsString());
             if (token == null)
-                return new Response(Response.StatusCode.BAD_REQUEST, "Error in session creation");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] in session creation");
 
             JsonObject response = new JsonObject();
-            response.addProperty("message", "Registration successfull with " + data.get("username").getAsString());
+            response.addProperty("message", "[Ok] Registration was successful with" + data.get("username").getAsString());
             response.addProperty("token", token);
                             
             return new Response(Response.StatusCode.CREATED, response);

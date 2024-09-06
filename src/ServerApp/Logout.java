@@ -12,8 +12,10 @@ public class Logout extends Endpoint {
     public Response POST(Request request) {
         JsonObject obj = request.getBody().getAsJsonObject();
         try {
-            removeSession(obj.get("token").getAsString());
-            return new Response(Response.StatusCode.OK, "Logout successfull");
+            if(!removeSession(obj.get("token").getAsString()))
+                return new Response(Response.StatusCode.OK, "[Error] Logout failed");
+
+            return new Response(Response.StatusCode.OK, "[Ok] Logout successful");
         } catch (Exception e) {
             return new Response(Response.StatusCode.BAD_REQUEST, e.getLocalizedMessage());
         }

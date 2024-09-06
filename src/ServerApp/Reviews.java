@@ -19,12 +19,12 @@ public class Reviews extends Endpoint {
         JsonObject data = request.getBody().getAsJsonObject();
 
         if(!dataAreValid(data))
-            return new Response(Response.StatusCode.BAD_REQUEST, "Value in rates must be between 0 and 5");
+            return new Response(Response.StatusCode.BAD_REQUEST, "[Error] Values in rates must be between 0 and 5");
             
         try {
             String identifier = checkSession(data.get("token").getAsString());
             if(identifier == null)
-                return new Response(Response.StatusCode.NON_AUTHORITATIVE_INFORMATION, "you must be authenticated");
+                return new Response(Response.StatusCode.NON_AUTHORITATIVE_INFORMATION, "[Error] You must be authenticated");
 
             ArrayList<User> users = Database.select(User.class, entry -> entry.getUsername().equals(identifier));
             if (users.isEmpty())
@@ -35,7 +35,7 @@ public class Reviews extends Endpoint {
 
             ArrayList<Hotel> hotels = Database.select(Hotel.class, entry-> entry.getCity().equals(hotelCity) && entry.getName().equals(hotelName));
             if(hotels.isEmpty())
-                return new Response(Response.StatusCode.BAD_REQUEST, "Hotel doesn't exits");
+                return new Response(Response.StatusCode.BAD_REQUEST, "[Error] Hotel doesn't exits");
 
             Database.insert(Review.class, data.get("rate").getAsInt(),
                                                     data.get("positionRate").getAsInt(),
@@ -53,7 +53,7 @@ public class Reviews extends Endpoint {
             hotels.get(0).setServicesRate(data.get("priceRate").getAsInt());
 
             users.get(0).incrementLevel();
-            return new Response(Response.StatusCode.CREATED, "Review added");
+            return new Response(Response.StatusCode.CREATED, "[Ok] Review added");
         } catch(Exception e) {
             e.printStackTrace();
             return new Response(Response.StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());

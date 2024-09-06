@@ -32,8 +32,10 @@ public class SearchAllHotels extends Command {
         Message.write(Request.class, output, new Request("/hotels", Request.Methods.GET, obj));
         
         Response response = Message.read(Response.class, input);
-        if (response.statusCode != Response.StatusCode.OK)
+        if (response.statusCode != Response.StatusCode.OK) {
             System.out.println(response.getBody().getAsJsonObject().get("message").getAsString());
+            return;
+        }
 
         for (JsonElement element : response.getBody().getAsJsonArray()) {
             Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());

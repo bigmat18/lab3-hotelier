@@ -38,7 +38,6 @@ public class SearchHotel extends Command {
         else {
             for (JsonElement element : response.getBody().getAsJsonArray()) {
                 Hotel hotel = Message.getMessage(Hotel.class, element.getAsJsonObject().toString());
-                System.out.println("---------------------------------------------");
                 System.out.println(hotel.toString());
             }
         }

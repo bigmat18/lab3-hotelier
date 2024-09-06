@@ -22,7 +22,7 @@ public class Login extends Command {
 
     public void execution(DataInputStream input, DataOutputStream output, AppStatus status) throws IOException {
         if(status.isLogged()) {
-            System.out.println("User alredy logged. Execute 'logout' firt to login with new user");
+            System.out.println("[Error] User alredy logged. Execute 'logout' first to login with new user");
             return;
         }
 
